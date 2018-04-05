@@ -1,8 +1,6 @@
 <?php
 
 Route::group(['prefix' => 'ajaxable'], function () {
-	Route::get('list', 'GlaivePro\Ajaxable\Controller@respondList')->name('ajaxable.list');
-	
 	Route::post('create', 'GlaivePro\Ajaxable\Controller@create')->name('ajaxable.create');
 	Route::post('update', 'GlaivePro\Ajaxable\Controller@update')->name('ajaxable.update');
 	Route::post('delete', 'GlaivePro\Ajaxable\Controller@delete')->name('ajaxable.delete');

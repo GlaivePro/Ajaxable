@@ -55,7 +55,6 @@ $visibleAndOrderedArticles = Article::items()->get();
 ### Available HTTP calls:
 Route | Data | Response
 ---|---|---
-`ajaxable.list` | `{model: 'yourModel', id: 12345}` | HTML for list of models
 `ajaxable.create` | `{model: 'yourModel'}` | HTML for model`s row. *Note: request may also include other key: value pairs that you want to set.*
 `ajaxable.update` | `{model: 'yourModel', id: 12345, key: 'field_name', val: 'value'};` | `['success' => 1]`
 `ajaxable.delete` | `{model: 'yourModel', id: 12345}` | `['success' => 1]`
