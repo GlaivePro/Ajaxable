@@ -1,7 +1,7 @@
 {
     "name": "GlaivePro/Ajaxable",
     "type": "library",
-    "description": "Functionality implementation for changes over AJAX",
+    "description": "Laravel package that allows you to control models through ajax calls without bothering you on the PHP side.",
     "keywords": [
         "Eloquent",
         "Laravel"
