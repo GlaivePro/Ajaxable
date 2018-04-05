@@ -55,35 +55,15 @@ $visibleAndOrderedArticles = Article::items()->get();
 ### Available HTTP calls:
 Route | Data | Response
 ---|---|---
-`ajaxable.list` | `{model: 'yourModel',
-					id: 12345}` | HTML for list of models
+`ajaxable.list` | `{model: 'yourModel', id: 12345}` | HTML for list of models
 `ajaxable.create` | `{model: 'yourModel'}` | HTML for model`s row. *Note: request may also include other key: value pairs that you want to set.*
-`ajaxable.update` | `{ model: 'yourModel',
-					   id: 12345,
-					   key: 'field_name',
-					   val: 'value'};` | `['success' => 1]`
-`ajaxable.delete` | `{model: 'yourModel', 
-					  id: 12345}` | `['success' => 1]`
-`ajaxable.putFile` | `{model: 'yourModel', 
-					  id: 12345,
-					  key: 'fileKey',
-					  fileModel: 'relation',
-					  file: file }` | Local path to file. *Note: tries to mass-assign: `$yourModel->relation()->create(['name' => originalName, 'path' => storedFilePath])`. If no `relation` supplied, stores the path in `$yourModel->fileKey` field.*
-`ajaxable.removeFile` | `{	model: 'yourModel', 
-							id: 12345,
-							key: 'fileKey' }` | `['success' => 1]` *Note: if files have a separate model, use the delete action on that and rewrite it's `cleanUpForDeleting()` to handle file purge.*
-`ajaxable.control` | `{model: 'yourModel',
-					   id: 12345,
-					   action: 'up'}` or `{model: 'yourModel',
-					   id: 12345,
-					   action: 'down'}` | HTML for list with updated order.
-`ajaxable.control` | `{ model: 'yourModel',
-						id: 12345,
-						action: anotherAction}` | See notes below
-`ajaxable.control` | `{ model: 'yourModel',
-					    id: 12345,
-						action: anotherAction,
-						parameters: myParams}` | See notes below
+`ajaxable.update` | `{model: 'yourModel', id: 12345, key: 'field_name', val: 'value'};` | `['success' => 1]`
+`ajaxable.delete` | `{model: 'yourModel', id: 12345}` | `['success' => 1]`
+`ajaxable.putFile` | `{model: 'yourModel', id: 12345, key: 'fileKey', fileModel: 'relation', file: file }` | Local path to file. *Note: tries to mass-assign: `$yourModel->relation()->create(['name' => originalName, 'path' => storedFilePath])`. If no `relation` supplied, stores the path in `$yourModel->fileKey` field.*
+`ajaxable.removeFile` | `{model: 'yourModel', id: 12345, key: 'fileKey' }` | `['success' => 1]` *Note: if files have a separate model, use the delete action on that and rewrite it's `cleanUpForDeleting()` to handle file purge.*
+`ajaxable.control` | `{model: 'yourModel', id: 12345, action: 'up'}` or `{model: 'yourModel', id: 12345, action: 'down'}` | HTML for list with updated order.
+`ajaxable.control` | `{ model: 'yourModel', id: 12345, action: anotherAction}` | See notes below
+`ajaxable.control` | `{ model: 'yourModel', id: 12345, action: anotherAction, parameters: myParams}` | See notes below
 
 The `ajaxable.control` will execute the named `action` on the model supplying `parameters` if any are given and return whatever the method returns. In case it completes, but returns `null`, you will get `['success' => 1]`.
 
@@ -318,7 +298,7 @@ To change visibility of an item, make a `.ajaxable-control` with `toggle`, `show
 	data-id="123">
 		SHOW
 </button>
-```html
+```
 
 The toggling action also toggles the visibility on these buttons so they swap as visibility is changed.
 
