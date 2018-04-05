@@ -1,5 +1,12 @@
 # Ajaxable
 
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Software License][ico-license]](LICENSE.md)
+[![Build Status][ico-travis]][link-travis]
+[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
+[![Quality Score][ico-code-quality]][link-code-quality]
+[![Total Downloads][ico-downloads]][link-downloads]
+
 Ajaxable is a Laravel package that allows you to control models through ajax calls without bothering you on the PHP side. You still got to make the views however.
 
 ## Install
@@ -28,7 +35,7 @@ Make a directory `resources/views/ajaxable/yourModels` where `yourModels` is the
 1) `yourModel.blade.php` - a single row of model that will receive `$yourModel`.
 2) `list.blade.php` - list of models that will receive `$yourModels` and whatever else you supply through `YourModel::getDataForList()`. Usually this file is simply `@each('ajaxable.yourModels.yourModel', $yourModels, 'yourModel')`.
 
-Now you can manage the model with HTTP calls.
+Now you can manage the model via HTTP calls.
 ```javascript
 // a jQuery example
 $.post({
@@ -118,6 +125,7 @@ Method | Description | Default
 `cleanUpForDeleting()` | Called before deleting. | `//`
 `checkPermission($action)` | Test if an `$action` is allowed. | `Auth::check()`
 `validateForCreation($request)` | Validate data for creation. | Validate data using `$this->validationRulesForCreation` property if it's set.
+`prepareForCreation($request)` | Called before creating. | `//`
 `validate($request)` | Validate data for update. | Validate data using `$this->validationRules` property if it's set.
 `getDataForList()` | Supply additional data for list view. | `return [];`
 `show()` | Make object visible. | Sets `$object->hide` to `false`.
@@ -167,7 +175,7 @@ In case of a validation error user will get an alert. If you want to display it 
 
 
 ### Creator
-Click on `.ajaxable-creator` will make a request to create an object. Make sure to specify `data-model` attribute!
+A click on `.ajaxable-creator` will make a request to create an object. Make sure to specify `data-model` attribute!
 
 You may also supply any additional `data-*` attributes to be set (if columns exist) on the new model.
 
@@ -225,7 +233,7 @@ Tag name:
 This `.form-group` will then get class `has-error` added and `span.error-block.help-block` appended with the message.
 
 ### Deleter
-Click on `.ajaxable-delete` will remove an item specified in `data-*` attributes. HTML will also get removed if you wrap it (including the button) in `.ajaxable-row`.
+A click on `.ajaxable-delete` will remove an item specified in `data-*` attributes. HTML will also get removed if you wrap it (including the button) in `.ajaxable-row`.
 
 ```html
 <table>
@@ -316,4 +324,8 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 [link-packagist]: https://packagist.org/packages/GlaivePro/Ajaxable
 [link-author]: https://github.com/tontonsb
-[link-contributors]: ../../contributors
+[link-downloads]: https://packagist.org/packages/GlaivePro/Ajaxable
+
+[ico-version]: https://img.shields.io/packagist/v/:vendor/:package_name.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/:vendor/:package_name.svg?style=flat-square
