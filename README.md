@@ -1,9 +1,5 @@
 # Ajaxable
 
-[![Software License][ico-license]](LICENSE.md)
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Total Downloads][ico-downloads]][link-downloads]
-
 Ajaxable is a Laravel package that allows you to control models through ajax calls without bothering you on the PHP side. You still got to make the views however.
 
 ## Install
