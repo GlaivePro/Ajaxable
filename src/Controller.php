@@ -31,7 +31,8 @@ class Controller
 			if (\Schema::hasColumn($object->getTable(), $key))
 				$object->$key = $value;
 		
-		$object->prepareForCreation($request);
+		if (false === $object->prepareForCreation($request))
+			return 0;
 		
 		$object->save();
 		$object = $object->refresh();
@@ -68,6 +69,30 @@ class Controller
 		$object->save();
 		
 		return $this->respondOK();
+	}
+
+	public function updateOrCreate(Request $request)
+	{
+		$class = $this->getClass($request);
+
+		$wheres = [];
+		$attributes = [];
+
+		foreach ($request->all() as $key => $value)
+			if (':' == substr($key, 0, 1))
+				$wheres[substr($key, 1)] = $value;
+			else 
+				$attributes[$key] = $value;
+
+		$object = $class::firstOrNew($wheres, $attributes);
+		
+		if (!$object->isAllowedTo('updateOrCreate'))
+			return response('Action not allowed', 403);
+
+		if (false === $object->prepareUpdateOrCreate($request))
+			return response('Action not allowed', 400);
+
+		$this->respondOK();
 	}
 	
 	public function delete(Request $request)
@@ -122,7 +147,7 @@ class Controller
 		];
 		
 		return response()->json($response);
-	}
+	};
 	
 	public function removeFile(Request $request)
 	{

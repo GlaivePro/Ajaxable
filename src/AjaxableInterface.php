@@ -16,6 +16,7 @@ interface AjaxableInterface
 	public function validate($request);
 	public function validateForCreation($request);
 	public function prepareForCreation($request);
+	public function prepareUpdateOrCreate($request);
 	
 	// Supply a keyed array if the list view requires additional information
 	public function getDataForList();

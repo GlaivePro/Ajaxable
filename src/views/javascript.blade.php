@@ -7,20 +7,14 @@ $.ajaxSetup({
 	}
 });
 
-var ajaxableNewAttributes = $('.ajaxable-new-attribute');
-
-ajaxableNewAttributes.change(function() {
+$('.ajaxable-new-attribute').change(function() {
 	var attribute = $(this);
 	var creator = $('#' + attribute.data('creator'));
 	
 	creator.data(attribute.data('key'), attribute.val());
 });
 
-var ajaxableCreators = $('.ajaxable-creator');
-
-var list = $('#list-container');
-
-ajaxableCreators.click(function() {
+$('.ajaxable-creator').click(function() {
 	var button = $(this);
 	button.prop('disabled', true);
 	

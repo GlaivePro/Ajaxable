@@ -18,22 +18,12 @@ trait Ajaxable
 	
 	public function isAllowedTo($action)
 	{
-		$allowedActionsForAuthorized = [ 'create', 'update', 'delete', 'up', 'down', 'hide', 'show', 'toggle', 'putFile', 'removeFile', ];
+		$allowedActionsForAuthorized = [ 'create', 'update', 'updateOrCreate', 'delete', 'up', 'down', 'hide', 'show', 'toggle', 'putFile', 'removeFile', ];
 		
 		if (in_array($action, $allowedActionsForAuthorized)
 			return \Auth::check();
 		
 		return false;
-	}
-	
-	public function prepareForCreation($request)
-	{
-		//
-	}
-	
-	public function getDataForList()
-	{
-		return [];
 	}
 	
 	public function validate($request)
@@ -55,5 +45,20 @@ trait Ajaxable
 	{
 		if (isset($this->validationRulesForCreation))
 			$request->validate($this->validationRulesForCreation);
+	}
+	
+	public function prepareForCreation($request)
+	{
+		//
+	}
+
+	public function prepareUpdateOrCreate($request)
+	[
+		//
+	]
+	
+	public function getDataForList()
+	{
+		return [];
 	}
 }

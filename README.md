@@ -53,10 +53,11 @@ $visibleAndOrderedArticles = Article::items()->get();
 ```
 
 ### Available HTTP calls:
-Route | Data | Response
+Route | Data | Response on success
 ---|---|---
 `ajaxable.create` | `{model: 'yourModel'}` | HTML for model`s row. *Note: request may also include other key: value pairs that you want to set.*
 `ajaxable.update` | `{model: 'yourModel', id: 12345, key: 'field_name', val: 'value'};` | `['success' => 1]`
+`ajaxable.updateOrCreate` | `{model: 'yourModel', ':whereKey': 'whereVal', key: 'value'};` | `['success' => 1]` *Note: supply all wheres prefixing key with a colon (':name': 'john') and the attributes to be set as 'key': 'value'.*
 `ajaxable.delete` | `{model: 'yourModel', id: 12345}` | `['success' => 1]`
 `ajaxable.putFile` | `{model: 'yourModel', id: 12345, key: 'fileKey', fileModel: 'relation', file: file }` | Local path to file. *Note: tries to mass-assign: `$yourModel->relation()->create(['name' => originalName, 'path' => storedFilePath])`. If no `relation` supplied, stores the path in `$yourModel->fileKey` field.*
 `ajaxable.removeFile` | `{model: 'yourModel', id: 12345, key: 'fileKey' }` | `['success' => 1]` *Note: if files have a separate model, use the delete action on that and rewrite it's `cleanUpForDeleting()` to handle file purge.*
@@ -73,7 +74,7 @@ Other actions that Ajaxable doesn't implement will be forbidden so this wouldn't
 ```php
 public function isAllowedTo($action)
 {
-	$allowedActionsForAuthorized = [ 'create', 'update', 'delete', 'up', 'down', 'hide', 'show', 'toggle', 'putFile', 'removeFile', ];
+	$allowedActionsForAuthorized = [ 'create', 'update', 'updateOrCreate', 'delete', 'up', 'down', 'hide', 'show', 'toggle', 'putFile', 'removeFile', ];
 	
 	if (in_array($action, $allowedActionsForAuthorized))
 		return \Auth::check();
@@ -117,7 +118,8 @@ Method | Description | Default
 `cleanUpForDeleting()` | Called before deleting. | `//`
 `checkPermission($action)` | Test if an `$action` is allowed. | `Auth::check()`
 `validateForCreation($request)` | Validate data for creation. | Validate data using `$this->validationRulesForCreation` property if it's set.
-`prepareForCreation($request)` | Called before creating. | `//`
+`prepareForCreation($request)` | Called before saving newly created model. | `//`
+`prepareUpdateOrCreate($request)` | Called before saving updated or created model. Return false to prevent saving. | `//`
 `validate($request)` | Validate data for update. | Validate data using `$this->validationRules` property if it's set.
 `getDataForList()` | Supply additional data for list view. | `return [];`
 `show()` | Make object visible. | Sets `$object->hide` to `false`.
