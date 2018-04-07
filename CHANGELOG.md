@@ -1,18 +1,10 @@
 # Changelog
 
-## Initial commit
+## 0.2.0
 
 ### Added
-- Experimental version, first time these functions are extracted as a package for easier re-use.
+- Added functionality to update or create.
 
-### Deprecated
-- Nothing
+## Initial commit
 
-### Fixed
-- Nothing
-
-### Removed
-- Nothing
-
-### Security
-- Nothing
+Experimental version, first time these functions are extracted as a package for easier re-use.
