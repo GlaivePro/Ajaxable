@@ -148,7 +148,7 @@ This package also includes javascript library to take care of some requests if y
 <!-- provide jQuery here please! -->
 
 <!-- finally include our library -->
-@include('ajaxable:javascript')
+@include('ajaxable::javascript')
 ```
 
 Now let's focus on the uses!

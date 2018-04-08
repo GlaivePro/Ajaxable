@@ -147,7 +147,7 @@ class Controller
 		];
 		
 		return response()->json($response);
-	};
+	}
 	
 	public function removeFile(Request $request)
 	{
