@@ -22,12 +22,15 @@ $('.ajaxable-creator').click(function() {
 	
 	inputs.find('.error-block').remove();
 	inputs.closest('.form-group').removeClass('has-error');
+
+	var data = button.data();
+	delete data['ajaxable-list'];
 	
 	$.ajax({
 		url: "{{route('ajaxable.create')}}",
 		type: 'post',
 		dataType: 'json',
-		data: button.data(),
+		data: data,
 		success: function(response) {
 			if (1 == response['success'])
 			{
