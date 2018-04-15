@@ -38,7 +38,7 @@ $.post({
 	{
 		if (1 == response['success'])
 			console.log(response['row']);
-			// Received html from ajaxable.yourModel view
+			// Received html from ajaxable.yourModels.yourModel view
 	}
 });
 ```
