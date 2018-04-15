@@ -37,7 +37,7 @@ class Controller
 		$object->save();
 		$object = $object->refresh();
 		
-		if (method_exists($class, 'tidyUp'))
+		if (method_exists($class, 'scopeOrdered') && \Schema::hasColumn($object->getTable(), 'order'))
 			$object->tidyUp();
 		
 		if (method_exists($class, 'respondAjaxableObject'))
@@ -45,7 +45,6 @@ class Controller
 		
 		$view = 'ajaxable.'.str_plural(camel_case($model)).'.'.camel_case($model);
 		$data = [camel_case($model) => $object];
-		$data = $this->feedData($data, $request);
 		
 		$response = [
 			'success' => 1,
@@ -78,13 +77,15 @@ class Controller
 		$wheres = [];
 		$attributes = [];
 
-		foreach ($request->all() as $key => $value)
+		foreach ($request->except(['model']) as $key => $value)
 			if (':' == substr($key, 0, 1))
 				$wheres[substr($key, 1)] = $value;
 			else 
 				$attributes[$key] = $value;
 
-		$object = $class::firstOrNew($wheres, $attributes);
+		$object = $class::firstOrNew($wheres);
+		foreach($attributes as $key => $value)
+			$object->$key = $value;
 		
 		if (!$object->isAllowedTo('updateOrCreate'))
 			return response('Action not allowed', 403);
@@ -92,7 +93,9 @@ class Controller
 		if (false === $object->prepareUpdateOrCreate($request))
 			return response('Action not allowed', 400);
 
-		$this->respondOK();
+		$object->save();
+
+		return $this->respondOK();
 	}
 	
 	public function delete(Request $request)

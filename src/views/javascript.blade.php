@@ -18,7 +18,7 @@ $('.ajaxable-creator').click(function() {
 	var button = $(this);
 	button.prop('disabled', true);
 	
-	var inputs = $('input[data-key=' + field + '][data-creator=' + button.attr('id') + ']');
+	var inputs = $('input[data-creator=' + button.attr('id') + ']');
 	
 	inputs.find('.error-block').remove();
 	inputs.closest('.form-group').removeClass('has-error');

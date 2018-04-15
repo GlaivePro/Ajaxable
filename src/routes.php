@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['prefix' => 'ajaxable'], function () {
+Route::group(['prefix' => 'ajaxable', 'middleware' => 'web'], function () {
 	Route::post('create', 'GlaivePro\Ajaxable\Controller@create')->name('ajaxable.create');
 	Route::post('update', 'GlaivePro\Ajaxable\Controller@update')->name('ajaxable.update');
 	Route::post('update-or-create', 'GlaivePro\Ajaxable\Controller@updateOrCreate')->name('ajaxable.updateOrCreate');

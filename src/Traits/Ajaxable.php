@@ -20,7 +20,7 @@ trait Ajaxable
 	{
 		$allowedActionsForAuthorized = [ 'create', 'update', 'updateOrCreate', 'delete', 'up', 'down', 'hide', 'show', 'toggle', 'putFile', 'removeFile', ];
 		
-		if (in_array($action, $allowedActionsForAuthorized)
+		if (in_array($action, $allowedActionsForAuthorized))
 			return \Auth::check();
 		
 		return false;
@@ -53,9 +53,9 @@ trait Ajaxable
 	}
 
 	public function prepareUpdateOrCreate($request)
-	[
+	{
 		//
-	]
+	}
 	
 	public function getDataForList()
 	{
