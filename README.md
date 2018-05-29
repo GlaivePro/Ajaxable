@@ -31,16 +31,16 @@ Make a directory `resources/views/ajaxable/yourModels` where `yourModels` is the
 Now you can manage the model via HTTP calls.
 ```javascript
 // a jQuery example
-$.post({
+$.post(
 	"{{route('ajaxable.create')}}",
-	data: {model: 'article'},
+	{model: 'article'},
 	function(response)
 	{
 		if (1 == response['success'])
 			console.log(response['row']);
 			// Received html from ajaxable.yourModels.yourModel view
 	}
-});
+);
 ```
 
 If you want to use the visibility and ordering functionality, add `hide` (boolean or int) and `order` (integer) columns respectively to the database table. This will allow you to use some handy scopes.
