@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.2
+## 0.2.3
 
 ### Added
 - Toggling `d-none` class along with `hidden`.
