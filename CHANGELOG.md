@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.2
+
+### Added
+- Toggling `d-none` class along with `hidden`.
+
+### Updated
+- Rewrote readme focusing on the handier parts first.
+
 ## 0.2.1
 
 ### Fixed
