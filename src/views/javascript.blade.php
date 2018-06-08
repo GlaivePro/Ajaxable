@@ -173,7 +173,7 @@ $('body').on('click', '.ajaxable-control', function() {
 			{
 				if ('toggle' == action)
 				{
-					$('.ajaxable-control[data-action="toggle"][data-model=' + model + '][data-id=' + id + ']').toggleClass('hidden');
+					$('.ajaxable-control[data-action="toggle"][data-model=' + model + '][data-id=' + id + ']').toggleClass('hidden').toggleClass('d-none');
 					button.prop('disabled', false);
 				}
 				else
