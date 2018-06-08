@@ -1,6 +1,6 @@
 # Ajaxable
 
-Ajaxable is a Laravel package that allows you to control models through ajax calls without bothering you on the PHP side. You still got to make the views however.
+Ajaxable is a Laravel package that allows you to control (create, edit, delete) models without bothering you on the PHP or JavaScript side. Just add markup to your html, use the trait in the model and it works!
 
 ## Install
 
@@ -10,6 +10,8 @@ $ composer require glaivepro/ajaxable
 ```
 
 ## Usage
+
+### Editing model attributes
 
 Make your model ajaxable.
 ```php
@@ -23,12 +25,192 @@ class Article extends Model
 }
 ```
 
-Make a directory `resources/views/ajaxable/yourModels` where `yourModels` is the camelCase plural of you actual model. Inside this directory create two files:
+Add the csrf token and include the library (it depends on jQuery).
+```html
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
-1) `yourModel.blade.php` - a single row of model that will receive `$yourModel`.
-2) `list.blade.php` - list of models that will receive `$yourModels` and whatever else you supply through `YourModel::getDataForList()`. Usually this file is simply `@each('ajaxable.yourModels.yourModel', $yourModels, 'yourModel')`.
+<!-- your html -->
+<!-- Example html: name of \App\Tag with id 12345 that updates in the database as you change the value in the field -->
+<input
+	class="ajaxable-edit"
+	data-model="tag"
+	data-id="12345"
+	data-key="name" >
 
-Now you can manage the model via HTTP calls.
+<!-- provide jQuery here please! -->
+
+<!-- finally include our library -->
+@include('ajaxable::javascript')
+```
+
+In case of a validation error (read on that later) user will get an alert. If you want to display it on html instead, wrap the input in `.form-group`. Error will be added in `span.error-block.help-block` and class `has-error` will be added to `.form-group`.
+
+
+### Deleting models
+
+A click on `.ajaxable-delete` will remove an item specified by `data-*` attributes. HTML will also get removed if you wrap it (including the button) in `.ajaxable-row`.
+
+```html
+<table>
+	<tr>
+		<th> ID <th> Name <th> Controls
+	<tbody id="tag-list">
+		<tr class="ajaxable-row">
+			<td>1
+			<td>First tag
+			<td><button
+				class="ajaxable-delete"
+				data-model="tag"
+				data-id="1" >
+					Delete
+				</button>
+		<tr class="ajaxable-row">
+			<td>2
+			<td>Another tag
+			<td><button
+				class="ajaxable-delete"
+				data-model="tag"
+				data-id="2" >
+					Delete
+				</button>
+</table>
+```
+
+
+### Creating new models
+
+A click on `.ajaxable-creator` will make a request to create an object. Make sure to specify `data-model` attribute!
+
+You may also supply any additional `data-*` attributes to be set (if columns exist) on the new model.
+```html
+<button
+	class="ajaxable-creator"
+	data-model="comment"
+	data-article_id="2545" >
+		Create
+</button>
+```
+
+Usually you have a list of entries and you would like the new item appended to the list. We have to define the template for new entries and reference the list.
+
+Make a directory `resources/views/ajaxable/yourModels` where `yourModels` is the camelCase plural of you actual model. Inside the directory create file `yourModel.blade.php` - a single row of model (for your list of models). That will receive `$yourModel`. This will be ajaxed to you upon creation and added to the list of items.
+
+```html
+<li>{{$tag->name}}
+```
+
+You can now refrence the list in the creator.
+```html
+<ul id="tag-list">
+	<li>Existing tag 1
+	<li>Existing tag 2
+<button
+	class="ajaxable-creator"
+	data-model="tag"
+	data-ajaxable-list="tag-list" >
+		Create
+</button>
+```
+
+The above example would append created html (using `ajaxable.tags.tag` view) to `.tag-list`, scroll it into view and add class `info` for 1.5 seconds (for highlighting purposes).
+
+#### Specifying attribute values for new models
+
+In many cases you also want the user to specify some attributes for the new entry. Make a `.ajaxable-new-attribute` input and specify `data-key` and `data-creator` attributes. On change the mentioned creator will get the data (specified by `data-key`) added or updated according to value of this input.
+
+```html
+Tag name:
+<input
+	class="ajaxable-new-attribute"
+	data-key="name"
+	data-creator="theCreatorInThisExample" >
+<button
+	class="ajaxable-creator"
+	id="theCreatorInThisExample"
+	data-model="tag" >
+		Create
+</button>
+```
+
+In case of validation error, user will get alerts. If you want to display alerts neatly instead, wrap input in `.form-group`:
+```html
+Tag name:
+<div class="form-group"
+	<input
+		class="ajaxable-new-attribute"
+		data-key="name"
+		data-creator="theCreatorInThisExample" >
+</div>
+```
+This `.form-group` will then get class `has-error` added and `span.error-block.help-block` appended with the message.
+
+
+### Reordering and hiding
+
+To use these functions, you should add `hide` (boolean or int) and `order` (integer) columns respectively to the database table. This will allow you to use some handy scopes.
+```php
+$visibleArticles = Article::active()->get();
+
+$orderedArticles = Article::ordered()->get();
+
+$visibleAndOrderedArticles = Article::items()->get();
+```
+
+Inside the `resources/views/ajaxable/yourModels` directory create a `list.blade.php` - list of models that will receive `$yourModels` and whatever else you supply through `YourModel::getDataForList()`. Usually this file is simply `@each('ajaxable.yourModels.yourModel', $yourModels, 'yourModel')`.
+
+To reorder a list, add two buttons to each row.
+```html
+<table>
+	<tbody id="tag-list">
+		<tr> 
+			<td> Tag 1
+			<td> <button 
+				class="ajaxable-control" 
+				data-model="tag"
+				data-ajaxable-list="tag-list"
+				data-action="up"
+				data-id="1" >
+					UP
+				</button>
+			<td><button 
+				class="ajaxable-control" 
+				data-model="tag" 
+				data-ajaxable-list="tag-list"
+				data-action="down"
+				data-id="1" >
+					DOWN
+				</button>
+</table>
+```
+
+User will receive an updated list (prepared according to your `ajaxable.tags.list` view). It will get inserted in the list specified in `data-ajaxable-list`.
+
+To change visibility of an item, make a `.ajaxable-control` with `toggle`, `show` or `hide` action. We do it like this:
+```html
+<button
+	class="ajaxable-control" 
+	data-model="tag" 
+	data-action="toggle"
+	data-id="123">
+		HIDE
+</button>
+<button
+	class="ajaxable-control hidden" 
+	data-model="tag" 
+	data-action="toggle"
+	data-id="123">
+		SHOW
+</button>
+```
+
+The toggling action also toggles the visibility (the `hidden` and `d-none` classes) on these buttons so they swap as visibility is changed.
+
+
+## Advanced usage
+
+### Doing the JavaScript side yourself
+
+You can call all the stuff using HTTP calls and implementing JavaScript yourself if you wish so!
 ```javascript
 // a jQuery example
 $.post(
@@ -43,19 +225,10 @@ $.post(
 );
 ```
 
-If you want to use the visibility and ordering functionality, add `hide` (boolean or int) and `order` (integer) columns respectively to the database table. This will allow you to use some handy scopes.
-```php
-$visibleArticles = Article::active()->get();
-
-$orderedArticles = Article::ordered()->get();
-
-$visibleAndOrderedArticles = Article::items()->get();
-```
-
-### Available HTTP calls:
+#### Available HTTP calls:
 Route | Data | Response on success
 ---|---|---
-`ajaxable.create` | `{model: 'yourModel'}` | HTML for model`s row. *Note: request may also include other key: value pairs that you want to set.*
+`ajaxable.create` | `{model: 'yourModel'}` | HTML for model's row. *Note: request may also include other key: value pairs that you want to set.*
 `ajaxable.update` | `{model: 'yourModel', id: 12345, key: 'field_name', val: 'value'};` | `['success' => 1]`
 `ajaxable.updateOrCreate` | `{model: 'yourModel', ':whereKey': 'whereVal', key: 'value'};` | `['success' => 1]` *Note: supply all wheres prefixing key with a colon (':name': 'john') and the attributes to be set as 'key': 'value'.*
 `ajaxable.delete` | `{model: 'yourModel', id: 12345}` | `['success' => 1]`
@@ -83,7 +256,7 @@ public function isAllowedTo($action)
 }
 ```
 
-## Customisation
+### Custom handling on the PHP side
 
 Using the Ajaxable trait will carry over a bunch of methods that you can override for more specific needs. To ensure compatibility with our controller, you should make sure to implement our interface:
 ```php
@@ -111,7 +284,7 @@ class Article extends Model implements AjaxableInterface
 }
 ```
 
-### List of methods
+#### List of methods
 Method | Description | Default
 ---|---|---
 `isUsed()` | If the object is being used (forbidden to delete). | `false`
@@ -135,174 +308,6 @@ Method | Description | Default
 You can also override `scopeActive`, `scopeOrdered` and `scopeItems` if you feel like it.
 
 The HTTP response is usually handled in our controller, but if you want to override them, create a `respondAjaxableList()` and/or `respondAjaxableObject()` method.
-
-## Javascript
-
-This package also includes javascript library to take care of some requests if you format the html appropriately. There are some dependancies that you should boilerplate for:
-
-```html
-<meta name="csrf-token" content="{{ csrf_token() }}">
-
-<!-- your html - see examples in the following subsections -->
-
-<!-- provide jQuery here please! -->
-
-<!-- finally include our library -->
-@include('ajaxable::javascript')
-```
-
-Now let's focus on the uses!
-
-### Editor
-Changing the value in `.ajaxable-edit` will update the value of an attribute.
-
-This is everything you need to set/edit your tag's name field (also works with checkboxes, selects):
-```html
-<input
-	class="ajaxable-edit"
-	data-model="tag"
-	data-id="12345"
-	data-key="name" >
-```
-
-In case of a validation error user will get an alert. If you want to display it on html, wrap the input in `.form-group`. Error will be added in `span.error-block.help-block` and class `has-error` will be added to `.form-group`.
-
-
-### Creator
-A click on `.ajaxable-creator` will make a request to create an object. Make sure to specify `data-model` attribute!
-
-You may also supply any additional `data-*` attributes to be set (if columns exist) on the new model.
-
-```html
-<button
-	class="ajaxable-creator"
-	data-model="comment"
-	data-article_id="2545" >
-		Create
-</button>
-```
-
-For user supplied content make a `.ajaxable-new-attribute` input and specify `data-key` and `data-creator` attributes. On change the mentioned creator will get the data (specified by `data-key`) added or updated according to value of this input.
-
-```html
-Tag name:
-<input
-	class="ajaxable-new-attribute"
-	data-key="name"
-	data-creator="theCreatorInThisExample" >
-<button
-	class="ajaxable-creator"
-	id="theCreatorInThisExample"
-	data-model="tag" >
-		Create
-</button>
-```
-
-You probably want the new row appended to a list. Specify the list on button and you will get it done! Just make sure to create a proper view.
-```html
-<ul id="tag-list">
-	<li>Existing tag 1
-	<li>Existing tag 2
-<button
-	class="ajaxable-creator"
-	id="theCreatorInThisExample"
-	data-model="tag"
-	data-ajaxable-list="tag-list" >
-		Create
-</button>
-```
-
-The above example would append created html (using `ajaxable.tags.tag` view) to `.tag-list`, scroll it into view and add class `info` for 1.5 seconds (for highlighting purposes).
-
-In case of validation error, user will get alerts. If you want to display alerts neatly instead, wrap input in `.form-group`:
-```html
-Tag name:
-<div class="form-group"
-	<input
-		class="ajaxable-new-attribute"
-		data-key="name"
-		data-creator="theCreatorInThisExample" >
-</div>
-```
-This `.form-group` will then get class `has-error` added and `span.error-block.help-block` appended with the message.
-
-### Deleter
-A click on `.ajaxable-delete` will remove an item specified in `data-*` attributes. HTML will also get removed if you wrap it (including the button) in `.ajaxable-row`.
-
-```html
-<table>
-	<tr>
-		<th> ID <th> Name <th> Controls
-	<tbody id="tag-list">
-		<tr class="ajaxable-row">
-			<td>1
-			<td>First tag
-			<td><button
-					class="ajaxable-delete"
-					data-model="tag"
-					data-id="1" >
-						Delete
-				</button>
-		<tr class="ajaxable-row">
-			<td>2
-			<td>Another tag
-			<td><button
-					class="ajaxable-delete"
-					data-model="tag"
-					data-id="2" >
-						Delete
-				</button>
-</table>
-```
-
-### Control
-To reorder a list, add two buttons to each row.
-```html
-<table>
-	<tbody id="tag-list">
-		<tr> 
-			<td> Tag 1
-			<td> <button 
-					class="ajaxable-control" 
-					data-model="tag"
-					data-ajaxable-list="tag-list"
-					data-action="up"
-					data-id="1" >
-						UP
-				</button>
-			<td>
-				<button 
-					class="ajaxable-control" 
-					data-model="tag" 
-					data-ajaxable-list="tag-list"
-					data-action="down"
-					data-id="1" >
-						DOWN
-				</button>
-</table>
-```
-
-User will receive an updated list (prepared according to your `ajaxable.tags.list` view). It will get inserted in the list specified in `data-ajaxable-list`.
-
-To change visibility of an item, make a `.ajaxable-control` with `toggle`, `show` or `hide` action. We do it like this:
-```html
-<button
-	class="ajaxable-control" 
-	data-model="tag" 
-	data-action="toggle"
-	data-id="123">
-		HIDE
-</button>
-<button
-	class="ajaxable-control hidden" 
-	data-model="tag" 
-	data-action="toggle"
-	data-id="123">
-		SHOW
-</button>
-```
-
-The toggling action also toggles the visibility on these buttons so they swap as visibility is changed.
 
 ## Change log
 
