@@ -184,7 +184,7 @@ $('body').on('click', '.ajaxable-control', function() {
 					if (button.data('ajaxable-list'))
 						var list = $(button.data('ajaxable-list'));
 					else
-						var list = button.closest('.ajaxable-list'));
+						var list = button.closest('.ajaxable-list');
 					
 					list.html(response['list']);
 				}
