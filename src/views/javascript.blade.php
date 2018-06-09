@@ -9,7 +9,7 @@ $.ajaxSetup({
 
 $('.ajaxable-new-attribute').change(function() {
 	var attribute = $(this);
-	var creator = $('#' + attribute.data('creator'));
+	var creator = $(attribute.data('creator'));
 	
 	creator.data(attribute.data('key'), attribute.val());
 });
@@ -38,13 +38,13 @@ $('.ajaxable-creator').click(function() {
 				
 				button.prop('disabled', false);
 				
-				var list = $('#' + button.data('ajaxable-list'));
+				var list = $(button.data('ajaxable-list'));
 				
 				list.append(newRow);
 				
 				newRow.get(0).scrollIntoView();
-				newRow.addClass('info').delay(1500).queue(function(){
-					$(this).removeClass('info').dequeue();
+				newRow.addClass('ajaxable-highlight').delay(1500).queue(function(){
+					$(this).removeClass('ajaxable-highlight').dequeue();
 				});
 			}
 		},
@@ -52,7 +52,10 @@ $('.ajaxable-creator').click(function() {
 			var response = $.parseJSON(rawResponse.responseText);
 			
 			$.each(response['errors'], function (field, error) {
-				var input = $('input[data-key=' + field + '][data-creator=' + button.attr('id') + ']');
+				input = input.filter(function(index, element) {
+					return $($(element).data('creator')).is(button);
+				});
+				
 				var formGroup = input.closest('.form-group');
 				if (formGroup.length)
 				{
@@ -178,7 +181,10 @@ $('body').on('click', '.ajaxable-control', function() {
 				}
 				else
 				{
-					var list = $('#' + button.data('ajaxable-list'));
+					if (button.data('ajaxable-list'))
+						var list = $(button.data('ajaxable-list'));
+					else
+						var list = button.closest('.ajaxable-list'));
 					
 					list.html(response['list']);
 				}

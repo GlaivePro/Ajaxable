@@ -99,7 +99,7 @@ Make a directory `resources/views/ajaxable/yourModels` where `yourModels` is the
 <li>{{$tag->name}}
 ```
 
-You can now refrence the list in the creator.
+You can now refrence the list in the creator - specify the selector in `data-ajaxable-list`.
 ```html
 <ul id="tag-list">
 	<li>Existing tag 1
@@ -107,12 +107,12 @@ You can now refrence the list in the creator.
 <button
 	class="ajaxable-creator"
 	data-model="tag"
-	data-ajaxable-list="tag-list" >
+	data-ajaxable-list="#tag-list" >
 		Create
 </button>
 ```
 
-The above example would append created html (using `ajaxable.tags.tag` view) to `.tag-list`, scroll it into view and add class `info` for 1.5 seconds (for highlighting purposes).
+The above example would append created html (using `ajaxable.tags.tag` view) to `#tag-list`, scroll it into view and add class `ajaxable-highlight` for 1.5 seconds (for highlighting purposes).
 
 #### Specifying attribute values for new models
 
@@ -123,7 +123,7 @@ Tag name:
 <input
 	class="ajaxable-new-attribute"
 	data-key="name"
-	data-creator="theCreatorInThisExample" >
+	data-creator="#theCreatorInThisExample" >
 <button
 	class="ajaxable-creator"
 	id="theCreatorInThisExample"
@@ -139,7 +139,7 @@ Tag name:
 	<input
 		class="ajaxable-new-attribute"
 		data-key="name"
-		data-creator="theCreatorInThisExample" >
+		data-creator="#theCreatorInThisExample" >
 </div>
 ```
 This `.form-group` will then get class `has-error` added and `span.error-block.help-block` appended with the message.
@@ -161,13 +161,12 @@ Inside the `resources/views/ajaxable/yourModels` directory create a `list.blade.
 To reorder a list, add two buttons to each row.
 ```html
 <table>
-	<tbody id="tag-list">
+	<tbody>
 		<tr> 
 			<td> Tag 1
 			<td> <button 
 				class="ajaxable-control" 
 				data-model="tag"
-				data-ajaxable-list="tag-list"
 				data-action="up"
 				data-id="1" >
 					UP
@@ -175,7 +174,6 @@ To reorder a list, add two buttons to each row.
 			<td><button 
 				class="ajaxable-control" 
 				data-model="tag" 
-				data-ajaxable-list="tag-list"
 				data-action="down"
 				data-id="1" >
 					DOWN
@@ -183,7 +181,7 @@ To reorder a list, add two buttons to each row.
 </table>
 ```
 
-User will receive an updated list (prepared according to your `ajaxable.tags.list` view). It will get inserted in the list specified in `data-ajaxable-list`.
+User will receive an updated list (prepared according to your `ajaxable.tags.list` view). The new list will replace the `.ajaxable-list` that you have wrapped this in. For specific cases you can specify selector for the list in `data-ajaxable-list`.
 
 To change visibility of an item, make a `.ajaxable-control` with `toggle`, `show` or `hide` action. We do it like this:
 ```html

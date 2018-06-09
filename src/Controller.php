@@ -191,6 +191,7 @@ class Controller
 	private function respondList(Request $request)
 	{
 		$object = $this->getObject($request);
+		$class = $this->getClass($request);
 		
 		if (!$object)
 		{
@@ -212,7 +213,7 @@ class Controller
 		$models = str_plural($request->model);
 		$data[$models] = $orderedItems;
 		
-		$view = 'ajaxable'.$models.'.list';
+		$view = 'ajaxable.'.$models.'.list';
 		
 		$response = [
 			'success' => 1,
