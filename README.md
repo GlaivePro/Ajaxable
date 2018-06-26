@@ -287,7 +287,7 @@ Method | Description | Default
 ---|---|---
 `isUsed()` | If the object is being used (forbidden to delete). | `false`
 `cleanUpForDeleting()` | Called before deleting. | `//`
-`checkPermission($action)` | Test if an `$action` is allowed. | `Auth::check()`
+`isAllowedTo($action)` | Test if an `$action` is allowed. | `Auth::check()`
 `validateForCreation($request)` | Validate data for creation. | Validate data using `$this->validationRulesForCreation` property if it's set.
 `prepareForCreation($request)` | Called before saving newly created model. | `//`
 `prepareUpdateOrCreate($request)` | Called before saving updated or created model. Return false to prevent saving. | `//`
