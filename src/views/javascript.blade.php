@@ -15,16 +15,24 @@ $('.ajaxable-new-attribute').change(function() {
 });
 
 $('.ajaxable-creator').click(function() {
+	var rawButton = this;
 	var button = $(this);
 	button.prop('disabled', true);
 	
-	var inputs = $('input[data-creator=' + button.attr('id') + ']');
+	var inputs = $('input').filter(function(index, input) {
+		return rawButton === $(input.data('creator')).get(0);
+	});
 	
 	inputs.find('.error-block').remove();
 	inputs.closest('.form-group').removeClass('has-error');
 
+	var positionForNewRow = 'last';
+	if ('first' == button.data('ajaxable-list-position'))
+		positionForNewRow = 'first';
+	
 	var data = button.data();
 	delete data['ajaxable-list'];
+	delete data['ajaxable-list-position'];
 	
 	$.ajax({
 		url: "{{route('ajaxable.create')}}",
@@ -40,7 +48,12 @@ $('.ajaxable-creator').click(function() {
 				
 				var list = $(button.data('ajaxable-list'));
 				
-				list.append(newRow);
+				if ('first' == positionForNewRow)
+					list.prepend(newRow);
+				else
+					list.append(newRow);
+				
+				inputs.val('');
 				
 				newRow.get(0).scrollIntoView();
 				newRow.addClass('ajaxable-highlight').delay(1500).queue(function(){

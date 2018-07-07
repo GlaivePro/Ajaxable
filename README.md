@@ -43,7 +43,7 @@ Add the csrf token and include the library (it depends on jQuery).
 @include('ajaxable::javascript')
 ```
 
-In case of a validation error (read on that later) user will get an alert. If you want to display it on html instead, wrap the input in `.form-group`. Error will be added in `span.error-block.help-block` and class `has-error` will be added to `.form-group`.
+In case of a validation error (read on backend validation later) user will get an alert. If you want to display it on html instead, wrap the input in `.form-group`. Error will be added in `span.error-block.help-block` and class `has-error` will be added to `.form-group`.
 
 
 ### Deleting models
@@ -93,7 +93,7 @@ You may also supply any additional `data-*` attributes to be set (if columns exi
 
 Usually you have a list of entries and you would like the new item appended to the list. We have to define the template for new entries and reference the list.
 
-Make a directory `resources/views/ajaxable/yourModels` where `yourModels` is the camelCase plural of you actual model. Inside the directory create file `yourModel.blade.php` - a single row of model (for your list of models). That will receive `$yourModel`. This will be ajaxed to you upon creation and added to the list of items.
+Make a file `resources/views/ajaxable/yourModel.blade.php` where `yourModel` is the camelCase of your actual model. It should contain a single row of model (for your list of models). That will receive `$yourModel`. This will be ajaxed to you upon creation and added to the list of items.
 
 ```html
 <li>{{$tag->name}}
@@ -112,7 +112,7 @@ You can now refrence the list in the creator - specify the selector in `data-aja
 </button>
 ```
 
-The above example would append created html (using `ajaxable.tags.tag` view) to `#tag-list`, scroll it into view and add class `ajaxable-highlight` for 1.5 seconds (for highlighting purposes).
+The above example would append created html (using `ajaxable.tag` view) to `#tag-list`, scroll it into view and add class `ajaxable-highlight` for 1.5 seconds (for highlighting purposes). If you want to prepend instead, specify `data-ajaxable-list-position="first"`;
 
 #### Specifying attribute values for new models
 
@@ -156,8 +156,6 @@ $orderedArticles = Article::ordered()->get();
 $visibleAndOrderedArticles = Article::items()->get();
 ```
 
-Inside the `resources/views/ajaxable/yourModels` directory create a `list.blade.php` - list of models that will receive `$yourModels` and whatever else you supply through `YourModel::getDataForList()`. Usually this file is simply `@each('ajaxable.yourModels.yourModel', $yourModels, 'yourModel')`.
-
 To reorder a list, add two buttons to each row.
 ```html
 <table>
@@ -181,7 +179,7 @@ To reorder a list, add two buttons to each row.
 </table>
 ```
 
-User will receive an updated list (prepared according to your `ajaxable.tags.list` view). The new list will replace the `.ajaxable-list` that you have wrapped this in. For specific cases you can specify selector for the list in `data-ajaxable-list`.
+User will receive an updated list (prepared using your `ajaxable.tag` view). The new list will replace the `.ajaxable-list` that you have wrapped this in. For specific cases you can specify selector for the list in `data-ajaxable-list`.
 
 To change visibility of an item, make a `.ajaxable-control` with `toggle`, `show` or `hide` action. We do it like this:
 ```html
@@ -218,7 +216,7 @@ $.post(
 	{
 		if (1 == response['success'])
 			console.log(response['row']);
-			// Received html from ajaxable.yourModels.yourModel view
+			// Received html from ajaxable.yourModel view
 	}
 );
 ```
@@ -279,12 +277,30 @@ class Article extends Model implements AjaxableInterface
 	{
 		return $this->section->articles();  // Return the query builder here!
 	}
+	
+	// Maybe your list is a custom view and/or you need some more data in list that you don't want to require many times.
+	public function drawList()
+	{
+		$tags = \App\Tag::all();
+		
+		return view('articleList', [
+			'articles' => $this->listNeighbours, 
+			'tags' => $tags,
+		])->render();
+	}
 }
 ```
 
 #### List of methods
 Method | Description | Default
 ---|---|---
+`getRowViewAttribute()` | Provide view name for response. | `ajaxable.yourModel`
+`drawRow()` | Draw single row. | Use `$this->rowView` view.
+`drawList()` | Draw list of rows. | Use `$this->rowView` view for each of `$this->listNeighbours`.
+`drawStaticList()` | Draw list if no object is specified. | Empty string.
+`respondRow()` | Respond single row. | `['success' => 1, 'row' => $this->drawRow()]`
+`respondList()` | Respond list of rows. | `['success' => 1, 'row' => $this->drawList()]`
+`respondStaticList()` | Respond list if no object is specified. | `['success' => 1, 'row' => $this->drawStaticList()]`
 `isUsed()` | If the object is being used (forbidden to delete). | `false`
 `cleanUpForDeleting()` | Called before deleting. | `//`
 `isAllowedTo($action)` | Test if an `$action` is allowed. | `Auth::check()`
@@ -300,6 +316,7 @@ Method | Description | Default
 `scopeOrdered($query)` | Scope that orders. | `$query->orderBy('order')`
 `up()` | Move object up in ordering. | Swap the order with above and clean up orderings for all the family.
 `down()` | Move object down in ordering. | Swap the order with below and clean up orderings for all the family.
+`tidyUp()` | Tidy up ordering. | Walk through ordered listNeighbours and reassign orders.
 `putFile($file, $relation, $fileKey)` | Save a file. | Puts file in `ajaxable` directory, writes a related file model or field (depending on request) and responds with path.
 `removeFile($fileKey)` | Remove a file. | Deletes the file and clears `fileKey` field.
 

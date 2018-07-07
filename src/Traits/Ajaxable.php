@@ -6,6 +6,64 @@ trait Ajaxable
 {
 	use HideableOrderable, Attachable;
 	
+	public function getRowViewAttribute()
+	{	
+		return 'ajaxable.'.camel_case(get_class($this));
+	}
+	
+	public function drawRow()
+	{	
+		$view = $this->rowView;
+		if (!view()->exists($view))
+			abort(500, 'View '.$this->rowView.' not found.');
+		
+		$data = [get_class($this) => $this];
+		
+		return view($view, $data)->render();
+	}
+	
+	public function respondRow()
+	{
+		return response()->json([
+			'success' => 1,
+			'row' => $this->drawRow(),
+		]);
+	}
+	
+	public function drawList()
+	{
+		$view = $this->rowView;
+		if (!view()->exists($view))
+			abort(500, 'View '.$this->rowView.' not found.');
+		
+		$list = '';
+		foreach ($this->listNeighbours()->ordered() as $item)
+			$list .= $item->drawRow();
+			
+		return $list;
+	}
+	
+	public function respondList()
+	{
+		return response()->json([
+			'success' => 1,
+			'row' => $this->drawList(),
+		]);
+	}
+	
+	public static function drawStaticList()
+	{
+		return '';
+	}
+	
+	public static function respondStaticList()
+	{
+		return response()->json([
+			'success' => 1,
+			'row' => self::drawStaticList(),
+		]);
+	}
+	
 	public function isUsed()
 	{
 		return false;
@@ -55,10 +113,5 @@ trait Ajaxable
 	public function prepareUpdateOrCreate($request)
 	{
 		//
-	}
-	
-	public function getDataForList()
-	{
-		return [];
 	}
 }

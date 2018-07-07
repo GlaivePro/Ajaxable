@@ -15,7 +15,7 @@ class Controller
 		if (!$object->isAllowedTo('create'))
 			return response('Action not allowed', 403);
 		
-		if (method_exists($class, 'scopeOrdered') && \Schema::hasColumn($object->getTable(), 'order'))
+		if (\Schema::hasColumn($object->getTable(), 'order'))
 		{
 			$lastItem = $class::ordered()->get()->last();
 			$order = 1;
@@ -37,21 +37,10 @@ class Controller
 		$object->save();
 		$object = $object->refresh();
 		
-		if (method_exists($class, 'scopeOrdered') && \Schema::hasColumn($object->getTable(), 'order'))
+		if (\Schema::hasColumn($object->getTable(), 'order'))
 			$object->tidyUp();
 		
-		if (method_exists($class, 'respondAjaxableObject'))
-			return $object->respondAjaxableObject();
-		
-		$view = 'ajaxable.'.str_plural(camel_case($model)).'.'.camel_case($model);
-		$data = [camel_case($model) => $object];
-		
-		$response = [
-			'success' => 1,
-			'row' => view($view, $data)->render(),
-		];
-		
-		return response()->json($response);
+		return $object->respondRow();
 	}
 	
 	public function update(Request $request)
@@ -190,36 +179,14 @@ class Controller
 	
 	private function respondList(Request $request)
 	{
+		$responseMethod = 'respondAjaxableList';
+		
 		$object = $this->getObject($request);
+		if ($object)
+			return $object->resopndList();
+		
 		$class = $this->getClass($request);
 		
-		if (!$object)
-		{
-			$response = [
-				'success' => 1,
-				'list' => view($view, $data)->render(),
-			];
-		
-			return response()->json($response);
-		}
-		
-		if (method_exists($class, 'respondAjaxableList'))
-			return $object->respondAjaxableList();
-		
-		$data = $object->getDataForList();
-		
-		$orderedItems = $object->listNeighbours()->ordered()->get();
-		
-		$models = str_plural($request->model);
-		$data[$models] = $orderedItems;
-		
-		$view = 'ajaxable.'.$models.'.list';
-		
-		$response = [
-			'success' => 1,
-			'list' => view($view, $data)->render(),
-		];
-		
-		return response()->json($response);
+		return $class::respondStaticList();
 	}
 }

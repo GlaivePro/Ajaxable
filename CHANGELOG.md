@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.4.0
+
+### Added
+- Possibility to specify position of the newly created row by `data-ajaxable-list-position`.
+- Possibility to specify name of the view on the model.
+
+### Removed
+- Need to create a list view.
+
+### Changed
+- Moved some functionality from Controller to trait.
+- The responses are now created with model methods (implemented by the trait). This allows new points to inject changegs and removes the need of explicit list view. Just override the `drawList()` method if you need to.
+- The creator now clears inputs on succesful creation.
+
+### Updated
+- Readme according to changes.
+- Interface according to changes.
+
 ## 0.3.0
 
 ### Changed
