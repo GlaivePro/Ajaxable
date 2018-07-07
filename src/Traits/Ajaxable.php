@@ -7,8 +7,9 @@ trait Ajaxable
 	use HideableOrderable, Attachable;
 	
 	public function getRowViewAttribute()
-	{	
-		return 'ajaxable.'.camel_case(get_class($this));
+	{
+		$className = end(explode('\\', get_class($this)));
+		return 'ajaxable.'.camel_case($className);
 	}
 	
 	public function drawRow()
