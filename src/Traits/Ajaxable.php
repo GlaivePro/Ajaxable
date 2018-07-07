@@ -6,10 +6,15 @@ trait Ajaxable
 {
 	use HideableOrderable, Attachable;
 	
+	private function getRawClassName()
+	{
+		$explodedFullName = explode('\\', get_class($this));
+		return camel_case(end($explodedFullName));
+	}
+	
 	public function getRowViewAttribute()
 	{
-		$className = end(explode('\\', get_class($this)));
-		return 'ajaxable.'.camel_case($className);
+		return 'ajaxable.'.$this->getRawClassName();
 	}
 	
 	public function drawRow()
@@ -18,7 +23,7 @@ trait Ajaxable
 		if (!view()->exists($view))
 			abort(500, 'View '.$this->rowView.' not found.');
 		
-		$data = [get_class($this) => $this];
+		$data = [$this->getRawClassName() => $this];
 		
 		return view($view, $data)->render();
 	}
