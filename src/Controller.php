@@ -183,7 +183,7 @@ class Controller
 		
 		$object = $this->getObject($request);
 		if ($object)
-			return $object->resopndList();
+			return $object->respondList();
 		
 		$class = $this->getClass($request);
 		
