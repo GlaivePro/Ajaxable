@@ -20,7 +20,7 @@ $('.ajaxable-creator').click(function() {
 	button.prop('disabled', true);
 	
 	var inputs = $('input').filter(function(index, input) {
-		return rawButton === $(input.data('creator')).get(0);
+		return rawButton === $($(input).data('creator')).get(0);
 	});
 	
 	inputs.find('.error-block').remove();
