@@ -55,9 +55,9 @@ trait Attachable
 		$file = $this->$key;
 		\Storage::delete($file->path);
 		
-		if ($file instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo)
+		if ($this->$key() instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo)
 		{
-			$foreignKey = $file->getForeignKey();
+			$foreignKey = $this->$key()->getForeignKey();
 			
 			$this->$foreignKey = null;
 	
