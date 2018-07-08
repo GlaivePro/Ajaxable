@@ -19,15 +19,10 @@ interface AjaxableInterface
 	// Tell if the object is being used (forbidden to delete).
 	public function isUsed();
 	
-	// Actions before deleting.
-	public function cleanUpForDeleting();
-	
 	// Actions before creating or updating (checking submitted info and setting mandatory fields).
 	public function isAllowedTo($action);
 	public function validate($request);
 	public function validateForCreation($request);
-	public function prepareForCreation($request);
-	public function prepareUpdateOrCreate($request);
 	
 	// Visibility functions. !! Can implement by using Hideable trait.
 	public function show();

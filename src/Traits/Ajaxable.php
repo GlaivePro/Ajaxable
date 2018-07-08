@@ -75,11 +75,6 @@ trait Ajaxable
 		return false;
 	}
 	
-	public function cleanUpForDeleting()
-	{
-		//
-	}
-	
 	public function isAllowedTo($action)
 	{
 		$allowedActionsForAuthorized = [ 'create', 'update', 'updateOrCreate', 'delete', 'up', 'down', 'hide', 'show', 'toggle', 'putFile', 'removeFile', ];
@@ -109,15 +104,5 @@ trait Ajaxable
 	{
 		if (isset($this->validationRulesForCreation))
 			$request->validate($this->validationRulesForCreation);
-	}
-	
-	public function prepareForCreation($request)
-	{
-		//
-	}
-
-	public function prepareUpdateOrCreate($request)
-	{
-		//
 	}
 }

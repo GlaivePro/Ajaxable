@@ -228,8 +228,8 @@ Route | Data | Response on success
 `ajaxable.update` | `{model: 'yourModel', id: 12345, key: 'field_name', val: 'value'};` | `['success' => 1]`
 `ajaxable.updateOrCreate` | `{model: 'yourModel', ':whereKey': 'whereVal', key: 'value'};` | `['success' => 1]` *Note: supply all wheres prefixing key with a colon (':name': 'john') and the attributes to be set as 'key': 'value'.*
 `ajaxable.delete` | `{model: 'yourModel', id: 12345}` | `['success' => 1]`
-`ajaxable.putFile` | `{model: 'yourModel', id: 12345, key: 'fileKey', relation: 'relation', file: file }` | Local path to file. *Note: tries to mass-assign: `$yourModel->relation()->create(['name' => originalName, 'path' => storedFilePath])`. If no `relation` supplied, stores the path in `$yourModel->fileKey` field.*
-`ajaxable.removeFile` | `{model: 'yourModel', id: 12345, key: 'fileKey' }` | `['success' => 1]` *Note: if files have a separate model, use the delete action on that and rewrite it's `cleanUpForDeleting()` to handle file purge.*
+`ajaxable.putFile` | `{model: 'yourModel', id: 12345, key: 'fileKey', file: file }` | Local path to file. `key` can be either relation (with `name` and `path` fields) or field (only path will be saved).
+`ajaxable.removeFile` | `{model: 'yourModel', id: 12345, key: 'fileKey' }` | `['success' => 1]`.
 `ajaxable.control` | `{model: 'yourModel', id: 12345, action: 'up'}` or `{model: 'yourModel', id: 12345, action: 'down'}` | HTML for list with updated order.
 `ajaxable.control` | `{ model: 'yourModel', id: 12345, action: anotherAction}` | See notes below
 `ajaxable.control` | `{ model: 'yourModel', id: 12345, action: anotherAction, parameters: myParams}` | See notes below
@@ -302,13 +302,9 @@ Method | Description | Default
 `respondList()` | Respond list of rows. | `['success' => 1, 'row' => $this->drawList()]`
 `respondStaticList()` | Respond list if no object is specified. | `['success' => 1, 'row' => $this->drawStaticList()]`
 `isUsed()` | If the object is being used (forbidden to delete). | `false`
-`cleanUpForDeleting()` | Called before deleting. | `//`
 `isAllowedTo($action)` | Test if an `$action` is allowed. | `Auth::check()`
 `validateForCreation($request)` | Validate data for creation. | Validate data using `$this->validationRulesForCreation` property if it's set.
-`prepareForCreation($request)` | Called before saving newly created model. | `//`
-`prepareUpdateOrCreate($request)` | Called before saving updated or created model. Return false to prevent saving. | `//`
 `validate($request)` | Validate data for update. | Validate data using `$this->validationRules` property if it's set.
-`getDataForList()` | Supply additional data for list view. | `return [];`
 `show()` | Make object visible. | Sets `$object->hide` to `false`.
 `hide()` | Make object hidden. | Sets `$object->hide` to `true`.
 `toggle()` | Toggle visibility. | Checks `$object->hide` and calls one of the above.
@@ -318,11 +314,9 @@ Method | Description | Default
 `down()` | Move object down in ordering. | Swap the order with below and clean up orderings for all the family.
 `tidyUp()` | Tidy up ordering. | Walk through ordered listNeighbours and reassign orders.
 `putFile($file, $relation, $fileKey)` | Save a file. | Puts file in `ajaxable` directory, writes a related file model or field (depending on request) and responds with path.
-`removeFile($fileKey)` | Remove a file. | Deletes the file and clears `fileKey` field.
+`removeFile($fileKey)` | Remove a file. | Deletes the file and clears `fileKey` field or relation.
 
 You can also override `scopeActive`, `scopeOrdered` and `scopeItems` if you feel like it.
-
-The HTTP response is usually handled in our controller, but if you want to override them, create a `respondAjaxableList()` and/or `respondAjaxableObject()` method.
 
 ## Change log
 

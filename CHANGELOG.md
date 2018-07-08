@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.0
+
+### Removed
+- Methods that are called when creating or deleting models. Native events are good enough.
+
+### Changed
+- Simplified putting and removing files.
+
+### Updated
+- Readme according to changes.
+- Interface according to changes.
+
+
 ## 0.4.0
 
 ### Added

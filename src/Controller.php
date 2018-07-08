@@ -31,9 +31,6 @@ class Controller
 			if (\Schema::hasColumn($object->getTable(), $key))
 				$object->$key = $value;
 		
-		if (false === $object->prepareForCreation($request))
-			return 0;
-		
 		$object->save();
 		$object = $object->refresh();
 		
@@ -79,9 +76,6 @@ class Controller
 		if (!$object->isAllowedTo('updateOrCreate'))
 			return response('Action not allowed', 403);
 
-		if (false === $object->prepareUpdateOrCreate($request))
-			return response('Action not allowed', 400);
-
 		$object->save();
 
 		return $this->respondOK();
@@ -96,7 +90,6 @@ class Controller
 		if ($object->isUsed())
 			return response('Object in use', 400);
 		
-		$object->cleanUpForDeleting();
 		$object->delete();
 		
 		return $this->respondOK();
@@ -127,8 +120,8 @@ class Controller
 		$object = $this->getObject($request);
 		if (!$object->isAllowedTo('putFile'))
 			return response('Action not allowed', 403);;
-				
-		$file = $object->putFile($request->file, $request->relation, $request->fileKey);
+	
+		$file = $object->putFile($request->file, $request->key);
 		
 		if (false === $file)
 			return response('Upload failed', 400);
@@ -147,9 +140,8 @@ class Controller
 		if (!$object->isAllowedTo('removeFile'))
 			return response('Action not allowed', 403);
 		
-		$object->removeFile($request->fileKey);
-		
-		return $this->respondOK();
+		if($object->removeFile($request->key));
+			return $this->respondOK();
 	}
 	
 	/***************/
@@ -170,17 +162,11 @@ class Controller
 	
 	private function respondOK()
 	{
-		$response = [
-			'success' => 1,
-		];
-		
-		return response()->json($response);
+		return ['success' => 1];
 	}
 	
 	private function respondList(Request $request)
 	{
-		$responseMethod = 'respondAjaxableList';
-		
 		$object = $this->getObject($request);
 		if ($object)
 			return $object->respondList();
