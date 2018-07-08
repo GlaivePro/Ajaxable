@@ -15,12 +15,11 @@ $('.ajaxable-new-attribute').change(function() {
 });
 
 $('.ajaxable-creator').click(function() {
-	var rawButton = this;
 	var button = $(this);
 	button.prop('disabled', true);
 	
-	var inputs = $('input').filter(function(index, input) {
-		return rawButton === $($(input).data('creator')).get(0);
+	var inputs = $('input').filter(function(index, element) {
+		return $($(element).data('creator')).is(button);
 	});
 	
 	inputs.find('.error-block').remove();
@@ -65,9 +64,7 @@ $('.ajaxable-creator').click(function() {
 			var response = $.parseJSON(rawResponse.responseText);
 			
 			$.each(response['errors'], function (field, error) {
-				input = input.filter(function(index, element) {
-					return $($(element).data('creator')).is(button);
-				});
+				var input = inputs.filter('[data-key="' + field + '"]')
 				
 				var formGroup = input.closest('.form-group');
 				if (formGroup.length)

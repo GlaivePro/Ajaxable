@@ -43,7 +43,7 @@ trait Ajaxable
 			abort(500, 'View '.$this->rowView.' not found.');
 		
 		$list = '';
-		foreach ($this->listNeighbours()->ordered() as $item)
+		foreach ($this->listNeighbours()->ordered()->get() as $item)
 			$list .= $item->drawRow();
 			
 		return $list;
@@ -53,7 +53,7 @@ trait Ajaxable
 	{
 		return response()->json([
 			'success' => 1,
-			'row' => $this->drawList(),
+			'list' => $this->drawList(),
 		]);
 	}
 	
@@ -66,7 +66,7 @@ trait Ajaxable
 	{
 		return response()->json([
 			'success' => 1,
-			'row' => self::drawStaticList(),
+			'list' => self::drawStaticList(),
 		]);
 	}
 	
