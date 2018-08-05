@@ -46,7 +46,7 @@ trait Attachable
 		{
 			\Storage::delete($this->$key);
 			
-			$this->$fileKey = null;
+			$this->$key = null;
 			$this->save();
 			
 			return true;
