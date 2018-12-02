@@ -65,8 +65,10 @@ trait AjaxableResponses
 		{
 			$rendered = view($this->getListView, [str_plural($this->getPlainClassName()) => $result])->render();
 		}
-		else ($view = $this->getRowView())
+		else
 		{
+			$view = $this->getRowView();
+			
 			abort_unless(view()->exists($view), 500, 'Neither view '.$view.' nor '.$this->getListView().' was found.');
 
 			$rendered = '';
