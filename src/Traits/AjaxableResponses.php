@@ -118,9 +118,4 @@ trait AjaxableResponses
 
 		return 'ajaxable'.str_plural($this->getPlainClassName());
 	}
-
-	protected function getPlainClassName()
-	{
-		return camel_case(class_basename($this));
-	}
 }

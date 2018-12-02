@@ -30,4 +30,9 @@ trait Ajaxable
 		
 		return false;
 	}
+
+	protected function getPlainClassName()
+	{
+		return camel_case(class_basename($this));
+	}
 }

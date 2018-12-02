@@ -70,6 +70,7 @@ trait AjaxableHtml
 		foreach (optional($options['values']) as $property => $value)
 			$attributes['data-attribute_'.$property] = $value;
 
+		$options['data-creator'] = '#'.$this->getPlainClassName().'-creator';
 		if ($options['creator'] ?? false)
 			$attributes['id'] = $options['creator'];
 
@@ -92,6 +93,7 @@ trait AjaxableHtml
 		$attributes['data-id'] = $this->id;
 		$attributes['data-key'] = $field;
 
+		$options['data-creator'] = '#'.$this->getPlainClassName().'-creator';
 		if ($options['creator'] ?? false)
 			$options['data-creator'] = '#'.$options['creator'];
 
@@ -126,7 +128,7 @@ trait AjaxableHtml
 		$options['attributes']['classes'] = implode(' ', $options['classes']);
 
 		foreach ($options['attributes'] as $attribute => $value)
-			$string .= ' '.$attribute'="'.$value.'"';
+			$string .= ' '.$attribute.'="'.$value.'"';
 
 		$string .= '>';
 
