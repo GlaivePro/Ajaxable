@@ -497,7 +497,7 @@ public function allowAjaxableTo(string $action)
 
 ## Change log
 
-v1 is a major rewrite of library. We intend to have less changes (especially less breaking changes) in the future and we are aiming to make this library production-ready.
+0.10 is a major rewrite of library. We intend to have less changes (especially less breaking changes) in the future and we are aiming to make this library production-ready.
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
