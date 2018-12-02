@@ -107,9 +107,9 @@ trait AjaxableHtml
 		$attributes['data-model'] = __CLASS__;
 		$attributes['data-key'] = $field;
 
-		$options['data-creator'] = '#'.self::getPlainClassName().'-creator';
+		$attributes['data-creator'] = '#'.self::getPlainClassName().'-creator';
 		if ($options['creator'] ?? false)
-			$options['data-creator'] = '#'.$options['creator'];
+			$attributes['data-creator'] = '#'.$options['creator'];
 
 		$options['attributes'] = $attributes;
 

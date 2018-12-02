@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.1
+
+### Fixed
+- A lot of bugs.
+
+### Added
+- Support for string of classes in addition to array when using HTML methods.
+
 ## 0.10.0
 
 Major rewrite, that's why the jump in version number. Aiming for v1.

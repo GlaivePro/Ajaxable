@@ -6,7 +6,7 @@ $(document).on('change', '.ajaxable-new-attribute', function() {
 	var attribute = $(this);
 	var creator = $(attribute.data('creator'));
 	
-	creator.data(attribute.data('key'), attribute.val());
+	creator.data('attribute_' + attribute.data('key'), attribute.val());
 });
 
 $(document).on('click', '.ajaxable-creator', function() {
@@ -29,14 +29,13 @@ $(document).on('click', '.ajaxable-creator', function() {
 		scroll = true;
 	
 	var data = {
-		model: button.data().model
+		model: button.data().model,
+		attributes: {}
 	};
 
 	for (var key in button.data()) 
-	{
 		if (0 === key.indexOf('attribute_'))
-			data[key.substr(10)] = button.data(key);
-	}
+			data.attributes[key.substr(10)] = button.data(key);
 	
 	$.ajax({
 		url: "{{route('ajaxable.create')}}",

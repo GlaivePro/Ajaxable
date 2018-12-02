@@ -8,7 +8,7 @@ trait AjaxableResponses
 	{
 		$method = 'respondAfter'.studly_case($action);
 		
-		if (method_exists($this, $method));
+		if (method_exists($this, $method))
 			return $this->$method($result);
 			
 		return $this->fallbackResponse($action, $result);
