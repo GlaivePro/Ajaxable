@@ -21,6 +21,9 @@ trait AjaxableResponses
 
 		$response = ['result' => $result];
 
+		if (in_array($action, ['add_media', 'get_media']))
+			return $response;
+
 		if (config('app.debug'))
 			$response['warning'] = 'No response defined for '.$action;
 		

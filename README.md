@@ -66,7 +66,7 @@ If you need it a bit more custom, you can create the HTML controls yourself. For
 </table>
 ```
 
-Of course, you are not obliged to use the provided javascript. Here's how you could create an article with title "Test article 4" using plain (but modern) javascript:
+Of course, you are not obliged to use the provided javascript. Here's how you could create an article with title "Test article 4" using plain javascript:
 
 ```javascript
 fetch("{{route('ajaxable.create')}}", {
@@ -80,7 +80,7 @@ fetch("{{route('ajaxable.create')}}", {
   credentials: "same-origin",
   body: JSON.stringify({
 	model: "App\Article",
-	fieldtitle: "Test article 4"
+	attributes: {title: "Test article 4"}
   })
 });
 ```
@@ -118,7 +118,7 @@ In case you want fields to update models (i.e. you are not working with HTTP int
 To obtain a field that synces changes to database, do this in your Blade template:
 
 ```html
-<!-- this is a field that updates `name` on `$tag` object.
+<!-- this is a field that updates `name` on `$tag` object. -->
 {{$tag->editor('name')}}
 ```
 
@@ -149,7 +149,7 @@ To obtain a button that invokes deletion of element once clicked, use the `delet
 You can specify some options:
 
 ```html
-{{$tag->deleteButton(['tag' => 'a'])}}
+{{$tag->deleteButton('Remove', ['tag' => 'a'])}}
 ```
 
 List of supported options:
@@ -173,7 +173,7 @@ To create models, use the static `creatorButton()` method.
 Set some initial attribute values
 
 ```html
-{{App\Comment::creatorButton('Insert new comment', ['values' => ['article_id' => $article->id]])}}
+{{App\Comment::creatorButton('Post comment', ['values' => ['article_id' => $article->id]])}}
 ```
 
 Add the fields so user could set some values before creation as well
@@ -182,7 +182,7 @@ Add the fields so user could set some values before creation as well
 {{App\Comment::creatorField('name')}}
 {{App\Comment::creatorField('text', ['type' => 'textarea'])}}
 
-{{App\Comment::creatorButton('Insert new comment')}}
+{{App\Comment::creatorButton('Post comment')}}
 ```
 
 If you need multiple creators with fields for same model on the same page, supply an ID to distinguish the sets.
@@ -321,12 +321,12 @@ Use your own JavaScript (or whatever else) to invoke stuff happening on your mod
 
 Route | Required parameters | Optional parameters | Response
 ---|---|---|---
-`ajaxable.create` | `model` | Initial values (provide field names with `attribute_` prefix: `attribute_title: "TITEL!!1"`) | Created model in JSON
-`ajaxable.update` | `model`, `id`, `key`, `value` | | Confirmation
-`ajaxable.updateOrCreate` | `model` | Wheres (with `where_` prefix: `where_name: "email"`) and values (with `attribute_` prefix: `attribute_unsubscribed: 1`) | Confirmation
-`ajaxable.delete` | `model`, `id` | Confirmation
-`ajaxable.control` | `model`, `id`, `action` | `parameters` - supply whatever to be passed to called action.
-`ajaxable.addMedia` | `model`, `id`, `file` | `collection`, `name` | File URL
+`ajaxable.create` | `model` | Initial values (key:value pairs in `attributes`), `view:true` to get HTML, `viewname: [view name]` to specify a blade template | Created model in JSON, optional HMTL.
+`ajaxable.update` | `model`, `id`, `key`, `value` | `view:true` to get HTML, `viewname: [view name]` to specify a blade template | Confirmation, model in JSON, optional HTML
+`ajaxable.delete` | `model`, `id`  | | Confirmation
+`ajaxable.updateOrCreate` | `model` | Wheres (key:value pairs in `wheres`) and values (key:value pairs in `attributes`), `view:true` to get HTML, `viewname: [view name]` to specify a blade template | Confirmation, model in JSON, optional HTML
+`ajaxable.control` | `model`, `id`, `action` | `parameters` - supply whatever to be passed to called action. | Whatever you decide to return
+`ajaxable.addMedia` | `model`, `id`, `media` | `collection`, `name` | Media object
 
 **Example**. To update `title` to `New Title` on `App\Article` with ID 155 you'd POST `{model: 'App\Article', id: 155, key: 'title', value: 'New Title'}` to `{{route(ajaxable.update)}}`.
 
@@ -338,9 +338,9 @@ Here are some get routes to retrieve data:
 
 Route | Required parameters | Optional parameters | Response
 ---|---|---|---
-`ajaxable.retrieve` | `model`, `id` | | Model in JSON
-`ajaxable.list` | `model` | Wheres (with `where_` prefix: `where_section_id: 37`) | Models in JSON
-`ajaxable.getMedia` | `model`, `id` | `collection`, `first: true`, `modifier` | Depends on modifier - `url`, `stream` or `model` (default).
+`ajaxable.retrieve` | `model`, `id` |`view:true` to get HTML, `viewname: [view name]` to specify a blade template | Confirmation, model in JSON, optional HTML
+`ajaxable.list` | `model` | `wheres` as key:value pairs, `scopes` as `scopeName` or `scopeName:parameter1,param2`; `view:true` to get HTML, `viewname: [view name]` to specify a blade template | Confirmation, model in JSON, optional HTML
+`ajaxable.getMedia` | `model`, `id` | `collection` | Media object
 
 **Note**. The media routes will only work if your model uses [Laravel Medialibrary](https://docs.spatie.be/laravel-medialibrary). 
 
