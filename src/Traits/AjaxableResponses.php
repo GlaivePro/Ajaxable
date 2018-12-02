@@ -49,7 +49,7 @@ trait AjaxableResponses
 		{
 			$view = request()->viewname;
 			abort_unless(view()->exists($view), 500, 'View '.$view.' not found.');
-			$rendered = view($view, [str_plural($this->getPlainClassName()) => $result])->render();
+			$rendered = view($view, [str_plural(self::getPlainClassName()) => $result])->render();
 				
 		}
 		else if (request()->has('rowviewname'))
@@ -59,11 +59,11 @@ trait AjaxableResponses
 
 			$rendered = '';
 			foreach ($result as $row)
-				$rendered .= view($view, [$this->getPlainClassName() => $row])->render();
+				$rendered .= view($view, [self::getPlainClassName() => $row])->render();
 		}
 		else if (view()->exists($this->getListView()))
 		{
-			$rendered = view($this->getListView, [str_plural($this->getPlainClassName()) => $result])->render();
+			$rendered = view($this->getListView, [str_plural(self::getPlainClassName()) => $result])->render();
 		}
 		else
 		{
@@ -73,7 +73,7 @@ trait AjaxableResponses
 
 			$rendered = '';
 			foreach ($result as $row)
-				$rendered .= view($view, [$this->getPlainClassName() => $row])->render();
+				$rendered .= view($view, [self::getPlainClassName() => $row])->render();
 		}
 
 		$response['view'] = $rendered;
@@ -98,7 +98,7 @@ trait AjaxableResponses
 
 		abort_unless(view()->exists($view), 500, 'View '.$view.' not found.');
 
-		$response['view'] = view($view, [$this->getPlainClassName() => $this])->render();
+		$response['view'] = view($view, [self::getPlainClassName() => $this])->render();
 
 		return $response;
 	}
@@ -108,7 +108,7 @@ trait AjaxableResponses
 		if ($this->rowView)
 			return $this->rowView;
 
-		return 'ajaxable'.$this->getPlainClassName();
+		return 'ajaxable'.self::getPlainClassName();
 	}
 
 	protected function getListView()
@@ -116,6 +116,6 @@ trait AjaxableResponses
 		if ($this->listView)
 			return $this->listView;
 
-		return 'ajaxable'.str_plural($this->getPlainClassName());
+		return 'ajaxable'.str_plural(self::getPlainClassName());
 	}
 }

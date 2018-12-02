@@ -31,8 +31,8 @@ trait Ajaxable
 		return false;
 	}
 
-	protected function getPlainClassName()
+	protected static function getPlainClassName()
 	{
-		return camel_case(class_basename($this));
+		return camel_case(class_basename(__CLASS__));
 	}
 }

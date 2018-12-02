@@ -494,6 +494,7 @@ public function allowAjaxableTo(string $action)
 - Retrieve single fields?
 - BelongsToMany support?
 - Refactor Traits/AjaxableHtml.
+- Default classes/attributes for HTML.
 
 ## Change log
 

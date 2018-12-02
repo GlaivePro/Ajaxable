@@ -9,11 +9,14 @@ trait AjaxableHtml
 	public function editor($field, $options = [])
 	{
 		$classes = $options['classes'] ?? [];
+		if (!(is_array($classes) || $classes instanceof ArrayAccess))
+			$classes = [$classes];
+			
 		$classes[] = 'ajaxable-edit';
 		$options['classes'] = $classes;
 
 		$attributes = $options['attributes'] ?? [];
-		$attributes['data-model'] = get_class($this);
+		$attributes['data-model'] = __CLASS__;
 		$attributes['data-id'] = $this->id;
 		$attributes['data-key'] = $field;
 		$options['attributes'] = $attributes;
@@ -37,40 +40,49 @@ trait AjaxableHtml
 
 		$options['tag'] = $tag;
  
-		return $this->ajaxableHtml($options);
+		return self::ajaxableHtml($options);
 	}
 
 	public function deleteButton($title, $options = [])
 	{
 		$classes = $options['classes'] ?? [];
+		if (!(is_array($classes) || $classes instanceof ArrayAccess))
+			$classes = [$classes];
+			
 		$classes[] = 'ajaxable-delete';
 		$options['classes'] = $classes;
+		
+		$options['text'] = $title;
 
 		$attributes = $options['attributes'] ?? [];
-		$attributes['data-model'] = get_class($this);
+		$attributes['data-model'] = __CLASS__;
 		$attributes['data-id'] = $this->id;
 		$options['attributes'] = $attributes;
 
 		if (!($options['tag'] ?? false))
 			$options['tag'] = 'button';
  
-		return $this->ajaxableHtml($options);
+		return self::ajaxableHtml($options);
 	}
 
 	public static function creatorButton($title, $options = [])
 	{
 		$classes = $options['classes'] ?? [];
+		if (!(is_array($classes) || $classes instanceof ArrayAccess))
+			$classes = [$classes];
+		
 		$classes[] = 'ajaxable-creator';
 		$options['classes'] = $classes;
+		
+		$options['text'] = $title;
 
 		$attributes = $options['attributes'] ?? [];
-		$attributes['data-model'] = get_class($this);
-		$attributes['data-id'] = $this->id;
+		$attributes['data-model'] = __CLASS__;
 
-		foreach (optional($options['values']) as $property => $value)
+		foreach ($options['values'] ?? [] as $property => $value)
 			$attributes['data-attribute_'.$property] = $value;
 
-		$options['data-creator'] = '#'.$this->getPlainClassName().'-creator';
+		$attributes['id'] = self::getPlainClassName().'-creator';
 		if ($options['creator'] ?? false)
 			$attributes['id'] = $options['creator'];
 
@@ -79,21 +91,23 @@ trait AjaxableHtml
 		if (!($options['tag'] ?? false))
 			$options['tag'] = 'button';
  
-		return $this->ajaxableHtml($options);
+		return self::ajaxableHtml($options);
 	}
 
-	public static function creatorField($options = [])
+	public static function creatorField($field, $options = [])
 	{
 		$classes = $options['classes'] ?? [];
+		if (!(is_array($classes) || $classes instanceof ArrayAccess))
+			$classes = [$classes];
+		
 		$classes[] = 'ajaxable-new-attribute';
 		$options['classes'] = $classes;
 
 		$attributes = $options['attributes'] ?? [];
-		$attributes['data-model'] = get_class($this);
-		$attributes['data-id'] = $this->id;
+		$attributes['data-model'] = __CLASS__;
 		$attributes['data-key'] = $field;
 
-		$options['data-creator'] = '#'.$this->getPlainClassName().'-creator';
+		$options['data-creator'] = '#'.self::getPlainClassName().'-creator';
 		if ($options['creator'] ?? false)
 			$options['data-creator'] = '#'.$options['creator'];
 
@@ -118,14 +132,14 @@ trait AjaxableHtml
 
 		$options['tag'] = $tag;
  
-		return $this->ajaxableHtml($options);
+		return self::ajaxableHtml($options);
 	}
 
-	private function ajaxableHtml($options)
+	protected static function ajaxableHtml($options)
 	{
-		$string = '<'.$tag;
-
-		$options['attributes']['classes'] = implode(' ', $options['classes']);
+		$string = '<'.$options['tag'];
+	
+		$options['attributes']['class'] = implode(' ', $options['classes']);
 
 		foreach ($options['attributes'] as $attribute => $value)
 			$string .= ' '.$attribute.'="'.$value.'"';
@@ -140,14 +154,14 @@ trait AjaxableHtml
 
 		if ('select' == $options['tag'])
 			foreach ($options['option'] as $option)
-				$string .= $this->ajaxableOptionHtml($option);
+				$string .= self::ajaxableOptionHtml($option);
 
-		$string .= '</'.$tag.'>';
+		$string .= '</'.$options['tag'].'>';
 
 		return new HtmlString($string);
 	}
 
-	private function ajaxableOptionHtml($option)
+	protected static function ajaxableOptionHtml($option)
 	{
 		if ($option instanceof HtmlString)
 			return $option->toHtml();
