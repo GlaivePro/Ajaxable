@@ -321,10 +321,10 @@ Use your own JavaScript (or whatever else) to invoke stuff happening on your mod
 
 Route | Required parameters | Optional parameters | Response
 ---|---|---|---
-`ajaxable.create` | `model` | Initial values (key:value pairs in `attributes`), `view:true` to get HTML, `viewname: [view name]` to specify a blade template | Created model in JSON, optional HMTL.
-`ajaxable.update` | `model`, `id`, `key`, `value` | `view:true` to get HTML, `viewname: [view name]` to specify a blade template | Confirmation, model in JSON, optional HTML
-`ajaxable.delete` | `model`, `id`  | | Confirmation
-`ajaxable.updateOrCreate` | `model` | Wheres (key:value pairs in `wheres`) and values (key:value pairs in `attributes`), `view:true` to get HTML, `viewname: [view name]` to specify a blade template | Confirmation, model in JSON, optional HTML
+`ajaxable.create` | `model` | Initial values (key:value pairs in `attributes`) | Model in JSON, optional HMTL.
+`ajaxable.update` | `model`, `id`, `key`, `value` | | Model in JSON, optional HTML
+`ajaxable.delete` | `model`, `id`  | | Confirmation only
+`ajaxable.updateOrCreate` | `model` | Constraints (key:value pairs in `wheres`) and values (key:value pairs in `attributes`) | Model in JSON, optional HTML
 `ajaxable.control` | `model`, `id`, `action` | `parameters` - supply whatever to be passed to called action. | Whatever you decide to return
 `ajaxable.addMedia` | `model`, `id`, `media` | `collection`, `name` | Media object
 
@@ -338,23 +338,30 @@ Here are some get routes to retrieve data:
 
 Route | Required parameters | Optional parameters | Response
 ---|---|---|---
-`ajaxable.retrieve` | `model`, `id` |`view:true` to get HTML, `viewname: [view name]` to specify a blade template | Confirmation, model in JSON, optional HTML
-`ajaxable.list` | `model` | `wheres` as key:value pairs, `scopes` as `scopeName` or `scopeName:parameter1,param2`; `view:true` to get HTML, `viewname: [view name]` to specify a blade template | Confirmation, model in JSON, optional HTML
+`ajaxable.retrieve` | `model`, `id` | | Confirmation, model in JSON, optional HTML
+`ajaxable.list` | `model` | `wheres` as key:value pairs, `scopes` as `scopeName` or `scopeName:parameter1,param2` | Model in JSON, optional HTML
 `ajaxable.getMedia` | `model`, `id` | `collection` | Media object
 
 **Note**. The media routes will only work if your model uses [Laravel Medialibrary](https://docs.spatie.be/laravel-medialibrary). 
 
-### Returning HTML instead of JSON
+### Returning HTML
+
+Some requests (`create`, `update`, `updateOrCreate`, `retrieve`) can include rendered HTML in the response if you specify `view: true` on the request.
 
 To return rendered html you should create a view. By default `'ajaxable.'.camel_case(class_basename($model))` will be looked for. For example, `App\Tag` and `App\Stats\UserFault` will look for `ajaxable.tag` and `ajaxable.userFault` respectively so you should create `tag.blade.php` and `userFault.blade.php` inside `resources/views/ajaxable`.
 
-This can be overriden by specifying `$ajaxableView` property on the model or supplying `view` in the request (this option is not allowed by default, you should [validate](authorization-and-validation) it before allowing to pass model through a view).
+This can be overriden by specifying `$rowView` property on the model or supplying `viewname` in the request.
 
-`$model` will be passed to view to render.
+Camel of basename will be passed to view. For example `$tags` or `$userFault`.
 
-If the view is defined, you will get concatenation of those views when GETting a list. If you need some more customization, supply `listView` parameter through HTTP or set `$ajaxableList` property on your model.
+The `list` method is able to return HTML as well if you specify `view: true`. The response will be rendered through template selected in this order:
 
-At any point you can pass `json: true` through HTTP interface to retrieve JSON even if a view is defined.
+- Template specified in requests `viewname` (plural of camel of basename will be passed, i.e. `$tags` or `$userFaults`).
+- Concatenation of template specified in requests `rowviewname`.
+- Template specified in models `$listView`.
+- Template `ajaxable.`.str_plural(camel_case(class_basename($model))).
+- Concatenation of template specified in models `$rowView`.
+- Concatenation of template `ajaxable.`.camel_case(class_basename($model)).
 
 ### Authorization and validation
 
@@ -385,16 +392,11 @@ public function allowAjaxableTo(string $action) : bool
 }
 ```
 
-### Customizing generated HTML
-
-Publish views and edit them.
-
-
 ### Customizing responses
 
-By default a successful request is responded with a JSON array that contains `"success": 1`. Something else like `model`, `models`, `view`, `url` could also be set for the appropriate actions.
+By default a successful request is responded with a JSON array that contains `"success": 1`. Something else like `object`, `collection`, `view` could also be set for the appropriate actions.
 
-However, all of this can be overriden. The requests go through a `respondAfter` method that will call try to call a specific method like `respondAfterDelete`, `respondAfterCreate`, `respondAfterRetrieve` etc, the last word corresponding to route name or the `action` value in case of `ajaxable.control` route. If the specific method is not found, `fallbackResponse` will be called which returns `['success' => 1]` by default.
+However, all of this can be overriden. The requests go through a `respondAfter` method on the model that will call try to call a specific method like `respondAfterDelete`, `respondAfterCreate`, `respondAfterRetrieve` etc, the last word corresponding to route name or the `action` value in case of `ajaxable.control` route. If the specific method is not found, `fallbackResponse` will be called which does some sensible defaults.
 
 If you want to customize responses after retrieval, you overwrite the corresponding method on your model:
 
