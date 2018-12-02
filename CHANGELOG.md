@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.10.0
+
+Major rewrite, that's why the jump in version number. Aiming for v1.
+
+### Added
+- Unified responses.
+- Retrieve and list to make this full CRUD.
+- Laravel Medialibrary support for uploads.
+
+### Removed
+- Dealing with files at the backend.
+- Ordering. We suggest using [Eloquent-sequence](https://github.com/highsolutions/eloquent-sequence) instead.
+- Hiding.
+- Support for `.ajaxable-control`.
+
+### Changed
+- HTTP API syntax.
+- Must specify full class names now.
+- Reduced the amount of required methods on model.
+- Validation/praparation calls to single verification call.
+
+### Updated
+- Readme according to changes.
+
+
 ## 0.5.0
 
 ### Removed

@@ -2,9 +2,7 @@
 
 namespace GlaivePro\Ajaxable;
 
-use Illuminate\Support\ServiceProvider;
-
-class AjaxableServiceProvider extends ServiceProvider
+class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     /**
      * Perform post-registration booting of services.

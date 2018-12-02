@@ -1,18 +1,93 @@
 # Ajaxable
 
-Ajaxable is a Laravel package that allows you to control (create, edit, delete) models without bothering you on the PHP or JavaScript side. Just add markup to your html, use the trait in the model and it works!
+Ajaxable is a Laravel package that allows you to control (create, edit, delete) Eloquent models without bothering you on the backend. Or even frontend. Add markup to your html or use helpers and it works!
 
-## Install
 
-Via Composer.
+## Getting started - installation, setup and examples
+
+Install via composer.
 ``` bash
 $ composer require glaivepro/ajaxable
 ```
 
-## Usage
+Add the trait to your model.
+```php
+namespace App;
 
-### Editing model attributes
+use Illuminate\Database\Eloquent\Model;
+use GlaivePro\Ajaxable\Traits\Ajaxable;
 
+class Article extends Model
+{
+    use Ajaxable;
+	//
+}
+```
+
+Create ajaxable input in your view, add the CSRF token and the javascript library (this one depends on jQuery):
+```html
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<label>
+	Title
+	{{$article->editor('title')}}
+</label>
+
+<!-- provide jQuery somewhere please! -->
+@include('ajaxable::jquery')
+```
+
+Now you have a field that saves any changes to database (if the user is authenticated).
+
+If you need it a bit more custom, you can create the HTML controls yourself. For example this is how you delete `App\Tag` with the specified ID and remove the row (this is why it's wrapped in `.ajaxable-row`):
+```html
+<table>
+	<tr>
+		<th> ID <th> Name <th> Controls
+	<tbody id="tag-list">
+		<tr class="ajaxable-row">
+			<td>1
+			<td>First tag
+			<td><button
+				class="ajaxable-delete"
+				data-model="App\Tag"
+				data-id="1" >
+					Delete
+				</button>
+		<tr class="ajaxable-row">
+			<td>2
+			<td>Another tag
+			<td><button
+				class="ajaxable-delete"
+				data-model="App\Tag"
+				data-id="2" >
+					Delete
+				</button>
+</table>
+```
+
+Of course, you are not obliged to use the provided javascript. Here's how you could create an article with title "Test article 4" using plain (but modern) javascript:
+
+```javascript
+fetch("{{route('ajaxable.create')}}", {
+  headers: {
+	"Content-Type": "application/json",
+	"Accept": "application/json",
+	"X-Requested-With": "XMLHttpRequest",
+	"X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+  },
+  method: "post",
+  credentials: "same-origin",
+  body: JSON.stringify({
+	model: "App\Article",
+	fieldtitle: "Test article 4"
+  })
+});
+```
+
+## Usage in details
+
+### Preliminaries
 Make your model ajaxable.
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -25,25 +100,123 @@ class Article extends Model
 }
 ```
 
-Add the csrf token and include the library (it depends on jQuery).
+In case you want fields to update models (i.e. you are not working with HTTP interface directly), include the CSRF token and JS library (it depends on jQuery) in your views.
 ```html
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<!-- your html -->
-<!-- Example html: name of \App\Tag with id 12345 that updates in the database as you change the value in the field -->
-<input
-	class="ajaxable-edit"
-	data-model="tag"
-	data-id="12345"
-	data-key="name" >
+<!-- other html -->
 
-<!-- provide jQuery here please! -->
-
-<!-- finally include our library -->
+<!-- provide jQuery please! -->
 @include('ajaxable::javascript')
 ```
 
-In case of a validation error (read on backend validation later) user will get an alert. If you want to display it on html instead, wrap the input in `.form-group`. Error will be added in `span.error-block.help-block` and class `has-error` will be added to `.form-group`.
+
+### Generating HTML
+
+#### Editing models
+
+To obtain a field that synces changes to database, do this in your Blade template:
+
+```html
+<!-- this is a field that updates `name` on `$tag` object.
+{{$tag->editor('name')}}
+```
+
+Some options can be supplied as well
+```html
+{{$tag->editor('disabled', ['type' => 'checkbox'])}}
+
+{{$tag->editor('group', ['type' => 'select', 'options' => [['value' => 1, 'text' => 'Group 1'], ['value' => 2, 'text' => 'Group 2']]])}}
+```
+
+List of supported options:
+
+Option | Description
+---|---
+`type` | `select` or `textarea` will make the respective field, anything else sets the type attribute on input element
+`classes` | adds classes (string or array) to element
+`attributes` | adds attributes (array of `'attribute' => 'value'`); doesn't work for type or class
+`options` | array of arrays (containing value and text keys) or strings, for select elements
+
+### Deleting models
+
+To obtain a button that invokes deletion of element once clicked, use the `deleteButton` method and supply the content of the element.
+
+```html
+{{$tag->deleteButton('Delete this item')}}
+```
+
+You can specify some options:
+
+```html
+{{$tag->deleteButton(['tag' => 'a'])}}
+```
+
+List of supported options:
+
+Option | Description
+---|---
+`tag` | HTML tag
+`classes` | adds classes (string or array) to element
+`attributes` | adds attributes (array of `'attribute' => 'value'`); doesn't work for class
+
+If you need button (and maybe something else) removed on successful delete, wrap it (including the button) in `.ajaxable-row`.
+
+### Creating models
+
+To create models, use the static `creatorButton()` method.
+
+```html
+{{App\Comment::creatorButton('Add')}}
+```
+
+Set some initial attribute values
+
+```html
+{{App\Comment::creatorButton('Insert new comment', ['values' => ['article_id' => $article->id]])}}
+```
+
+Add the fields so user could set some values before creation as well
+
+```html
+{{App\Comment::creatorField('name')}}
+{{App\Comment::creatorField('text', ['type' => 'textarea'])}}
+
+{{App\Comment::creatorButton('Insert new comment')}}
+```
+
+If you need multiple creators with fields for same model on the same page, supply an ID to distinguish the sets.
+
+```html
+{{App\Tag::creatorField('name', ['creator' => 'generic-tag-creator'])}}
+{{App\Tag::creatorField('name', ['creator' => 'special-tag-creator'])}}
+
+{{App\Tag::creatorButton('Create generic tag', ['creator' => 'generic-tag-creator'])}}
+{{App\Tag::creatorButton('Crete special tag', ['creator' => 'special-tag-creator'])}}
+```
+
+In addition `creatorField` supports all the same methods that `editor` does and `creatorButton` supports all the options that `deleteButton` does.
+
+
+### Writing your own HTML
+
+In many cases you'll want to write your own html but still want it to work with the included javascript library. You'll just have to add a little markup.
+
+We'll start with editing as that's the simplest.
+
+#### Editing model attributes
+
+Specify the model and add the `ajaxable-edit` class to your field.
+```html
+<!-- Example html: name of \App\Tag with id 12345 that updates in the database as you change the value in the field -->
+<input
+	class="ajaxable-edit"
+	data-model="App\Tag"
+	data-id="12345"
+	data-key="name" >
+```
+
+In case of a [validation error](authorization-and-validation) user will get an alert. If you want to display it on html instead, wrap the input in `.form-group`. Error will be added in `span.error-block.help-block` and class `has-error` will be added to `.form-group`.
 
 
 ### Deleting models
@@ -60,7 +233,7 @@ A click on `.ajaxable-delete` will remove an item specified by `data-*` attribut
 			<td>First tag
 			<td><button
 				class="ajaxable-delete"
-				data-model="tag"
+				data-model="App\Tag"
 				data-id="1" >
 					Delete
 				</button>
@@ -69,7 +242,7 @@ A click on `.ajaxable-delete` will remove an item specified by `data-*` attribut
 			<td>Another tag
 			<td><button
 				class="ajaxable-delete"
-				data-model="tag"
+				data-model="App\Tag"
 				data-id="2" >
 					Delete
 				</button>
@@ -77,46 +250,23 @@ A click on `.ajaxable-delete` will remove an item specified by `data-*` attribut
 ```
 
 
-### Creating new models
+#### Creating new models
 
-A click on `.ajaxable-creator` will make a request to create an object. Make sure to specify `data-model` attribute!
+A click on `.ajaxable-creator` will make a request to create an object. Specify model in `data-model` attribute.
 
-You may also supply any additional `data-*` attributes to be set (if columns exist) on the new model.
+You may also supply any additional `data-attribute_*` attributes to be set on the new model.
 ```html
 <button
 	class="ajaxable-creator"
-	data-model="comment"
-	data-article_id="2545" >
+	data-model="App\Comment"
+	data-attribute_article_id="2545" >
 		Create
 </button>
 ```
 
-Usually you have a list of entries and you would like the new item appended to the list. We have to define the template for new entries and reference the list.
+#### User supplied values for new models
 
-Make a file `resources/views/ajaxable/yourModel.blade.php` where `yourModel` is the camelCase of your actual model. It should contain a single row of model (for your list of models). That will receive `$yourModel`. This will be ajaxed to you upon creation and added to the list of items.
-
-```html
-<li>{{$tag->name}}
-```
-
-You can now refrence the list in the creator - specify the selector in `data-ajaxable-list`.
-```html
-<ul id="tag-list">
-	<li>Existing tag 1
-	<li>Existing tag 2
-<button
-	class="ajaxable-creator"
-	data-model="tag"
-	data-ajaxable-list="#tag-list" >
-		Create
-</button>
-```
-
-The above example would append created html (using `ajaxable.tag` view) to `#tag-list`, scroll it into view and add class `ajaxable-highlight` for 1.5 seconds (for highlighting purposes). If you want to prepend instead, specify `data-ajaxable-list-position="first"`;
-
-#### Specifying attribute values for new models
-
-In many cases you also want the user to specify some attributes for the new entry. Make a `.ajaxable-new-attribute` input and specify `data-key` and `data-creator` attributes. On change the mentioned creator will get the data (specified by `data-key`) added or updated according to value of this input.
+You can have an input that sets (on change) the value on creator:
 
 ```html
 Tag name:
@@ -127,12 +277,12 @@ Tag name:
 <button
 	class="ajaxable-creator"
 	id="theCreatorInThisExample"
-	data-model="tag" >
+	data-model="App\Tag" >
 		Create
 </button>
 ```
 
-In case of validation error, user will get alerts. If you want to display alerts neatly instead, wrap input in `.form-group`:
+In case of [validation error](#authorization-and-validation) user will get alerts. If you want to display alerts neatly instead, wrap input in `.form-group`:
 ```html
 Tag name:
 <div class="form-group"
@@ -144,196 +294,217 @@ Tag name:
 ```
 This `.form-group` will then get class `has-error` added and `span.error-block.help-block` appended with the message.
 
+#### Adding the created model to a list
 
-### Reordering and hiding
+Often times you have a list of entries and need the new item appended to the list. We can do this if your models [return html](#returning-html-instead-of-json).
 
-To use these functions, you should add `hide` (boolean or int) and `order` (integer) columns respectively to the database table. This will allow you to use some handy scopes.
-```php
-$visibleArticles = Article::active()->get();
-
-$orderedArticles = Article::ordered()->get();
-
-$visibleAndOrderedArticles = Article::items()->get();
-```
-
-To reorder a list, add two buttons to each row.
+Creator should have the list specified in `data-ajaxable-list`.
 ```html
-<table>
-	<tbody>
-		<tr> 
-			<td> Tag 1
-			<td> <button 
-				class="ajaxable-control" 
-				data-model="tag"
-				data-action="up"
-				data-id="1" >
-					UP
-				</button>
-			<td><button 
-				class="ajaxable-control" 
-				data-model="tag" 
-				data-action="down"
-				data-id="1" >
-					DOWN
-				</button>
-</table>
-```
-
-User will receive an updated list (prepared using your `ajaxable.tag` view). The new list will replace the `.ajaxable-list` that you have wrapped this in. For specific cases you can specify selector for the list in `data-ajaxable-list`.
-
-To change visibility of an item, make a `.ajaxable-control` with `toggle`, `show` or `hide` action. We do it like this:
-```html
+<ul id="tag-list">
+	<li>Existing tag 1
+	<li>Existing tag 2
+</ul>
 <button
-	class="ajaxable-control" 
-	data-model="tag" 
-	data-action="toggle"
-	data-id="123">
-		HIDE
-</button>
-<button
-	class="ajaxable-control hidden" 
-	data-model="tag" 
-	data-action="toggle"
-	data-id="123">
-		SHOW
+	class="ajaxable-creator"
+	data-model="App\Tag"
+	data-ajaxable-list="#tag-list" >
+		Create
 </button>
 ```
 
-The toggling action also toggles the visibility (the `hidden` and `d-none` classes) on these buttons so they swap as visibility is changed.
+The above example would append created html (using `ajaxable.tag` view) to `#tag-list` and add class `ajaxable-highlight` for 1.5 seconds (for highlighting purposes). If you want to prepend instead, specify `data-ajaxable-list-position="first"`. If you want the new item scrolled into view, specify `data-ajaxable-scroll="true"`.
 
 
-## Advanced usage
+### Using HTTP interface directly
 
-### Doing the JavaScript side yourself
+Use your own JavaScript (or whatever else) to invoke stuff happening on your models. Here's what we provide:
 
-You can call all the stuff using HTTP calls and implementing JavaScript yourself if you wish so!
-```javascript
-// a jQuery example
-$.post(
-	"{{route('ajaxable.create')}}",
-	{model: 'article'},
-	function(response)
-	{
-		if (1 == response['success'])
-			console.log(response['row']);
-			// Received html from ajaxable.yourModel view
-	}
-);
-```
+Route | Required parameters | Optional parameters | Response
+---|---|---|---
+`ajaxable.create` | `model` | Initial values (provide field names with `attribute_` prefix: `attribute_title: "TITEL!!1"`) | Created model in JSON
+`ajaxable.update` | `model`, `id`, `key`, `value` | | Confirmation
+`ajaxable.updateOrCreate` | `model` | Wheres (with `where_` prefix: `where_name: "email"`) and values (with `attribute_` prefix: `attribute_unsubscribed: 1`) | Confirmation
+`ajaxable.delete` | `model`, `id` | Confirmation
+`ajaxable.control` | `model`, `id`, `action` | `parameters` - supply whatever to be passed to called action.
+`ajaxable.addMedia` | `model`, `id`, `file` | `collection`, `name` | File URL
 
-#### Available HTTP calls:
-Route | Data | Response on success
----|---|---
-`ajaxable.create` | `{model: 'yourModel'}` | HTML for model's row. *Note: request may also include other key: value pairs that you want to set.*
-`ajaxable.update` | `{model: 'yourModel', id: 12345, key: 'field_name', val: 'value'};` | `['success' => 1]`
-`ajaxable.updateOrCreate` | `{model: 'yourModel', ':whereKey': 'whereVal', key: 'value'};` | `['success' => 1]` *Note: supply all wheres prefixing key with a colon (':name': 'john') and the attributes to be set as 'key': 'value'.*
-`ajaxable.delete` | `{model: 'yourModel', id: 12345}` | `['success' => 1]`
-`ajaxable.putFile` | `{model: 'yourModel', id: 12345, key: 'fileKey', file: file }` | Local path to file. `key` can be either relation (with `name` and `path` fields) or field (only path will be saved).
-`ajaxable.removeFile` | `{model: 'yourModel', id: 12345, key: 'fileKey' }` | `['success' => 1]`.
-`ajaxable.control` | `{model: 'yourModel', id: 12345, action: 'up'}` or `{model: 'yourModel', id: 12345, action: 'down'}` | HTML for list with updated order.
-`ajaxable.control` | `{ model: 'yourModel', id: 12345, action: anotherAction}` | See notes below
-`ajaxable.control` | `{ model: 'yourModel', id: 12345, action: anotherAction, parameters: myParams}` | See notes below
+**Example**. To update `title` to `New Title` on `App\Article` with ID 155 you'd POST `{model: 'App\Article', id: 155, key: 'title', value: 'New Title'}` to `{{route(ajaxable.update)}}`.
 
-The `ajaxable.control` will execute the named `action` on the model supplying `parameters` if any are given and return whatever the method returns. In case it completes, but returns `null`, you will get `['success' => 1]`.
+The `ajaxable.control` route could in theory call any method on your model. In practice the included checks refuse most actions and you should explicitly list what you want to allow in the model. Use sparingly!
 
-Out of the box the `up`, `down` (for ordering), `hide`, `show`, `toggle` (for visibility) actions are supported. You could also call some of the previous actions (like `delete`) using this to skip some validation and preparations (not advised unless you know what you're doing).
+The above routes will only work for POST requests and you must include XSRF token so Laravel would let you through.
 
-Other actions that Ajaxable doesn't implement will be forbidden so this wouldn't call random methods. To allow any, the model must override `isAllowedTo($action)` method. Default is this:
+Here are some get routes to retrieve data:
+
+Route | Required parameters | Optional parameters | Response
+---|---|---|---
+`ajaxable.retrieve` | `model`, `id` | | Model in JSON
+`ajaxable.list` | `model` | Wheres (with `where_` prefix: `where_section_id: 37`) | Models in JSON
+`ajaxable.getMedia` | `model`, `id` | `collection`, `first: true`, `modifier` | Depends on modifier - `url`, `stream` or `model` (default).
+
+**Note**. The media routes will only work if your model uses [Laravel Medialibrary](https://docs.spatie.be/laravel-medialibrary). 
+
+### Returning HTML instead of JSON
+
+To return rendered html you should create a view. By default `'ajaxable.'.camel_case(class_basename($model))` will be looked for. For example, `App\Tag` and `App\Stats\UserFault` will look for `ajaxable.tag` and `ajaxable.userFault` respectively so you should create `tag.blade.php` and `userFault.blade.php` inside `resources/views/ajaxable`.
+
+This can be overriden by specifying `$ajaxableView` property on the model or supplying `view` in the request (this option is not allowed by default, you should [validate](authorization-and-validation) it before allowing to pass model through a view).
+
+`$model` will be passed to view to render.
+
+If the view is defined, you will get concatenation of those views when GETting a list. If you need some more customization, supply `listView` parameter through HTTP or set `$ajaxableList` property on your model.
+
+At any point you can pass `json: true` through HTTP interface to retrieve JSON even if a view is defined.
+
+### Authorization and validation
+
+By default the actions are allowed to all authenticated users. This is only appropriate when there is just a single class of users. In most cases you'd override the `allowAjaxableTo` method on your model
+
+Here's an example that one might use for the contact form messages
 
 ```php
-public function isAllowedTo($action)
+public function allowAjaxableTo(string $action) : bool
 {
-	$allowedActionsForAuthorized = [ 'create', 'update', 'updateOrCreate', 'delete', 'up', 'down', 'hide', 'show', 'toggle', 'putFile', 'removeFile', ];
+	if ('create' == $action)
+	{
+		request()->validate([
+			'name' => 'required',
+			'email' => 'required|email',
+			'message' => 'required',
+		]);
+		
+		return true;
+	}
+
+	$allowedActionsForAuthorized = [ 'update', 'delete', 'retrieve', 'list', ];
 	
 	if (in_array($action, $allowedActionsForAuthorized))
-		return \Auth::check();
+		return auth()->check();
 	
 	return false;
 }
 ```
 
-### Custom handling on the PHP side
+### Customizing generated HTML
 
-Using the Ajaxable trait will carry over a bunch of methods that you can override for more specific needs. To ensure compatibility with our controller, you should make sure to implement our interface:
+Publish views and edit them.
+
+
+### Customizing responses
+
+By default a successful request is responded with a JSON array that contains `"success": 1`. Something else like `model`, `models`, `view`, `url` could also be set for the appropriate actions.
+
+However, all of this can be overriden. The requests go through a `respondAfter` method that will call try to call a specific method like `respondAfterDelete`, `respondAfterCreate`, `respondAfterRetrieve` etc, the last word corresponding to route name or the `action` value in case of `ajaxable.control` route. If the specific method is not found, `fallbackResponse` will be called which returns `['success' => 1]` by default.
+
+If you want to customize responses after retrieval, you overwrite the corresponding method on your model:
+
 ```php
-use Illuminate\Database\Eloquent\Model;
-use GlaivePro\Ajaxable\AjaxableInterface;
-use GlaivePro\Ajaxable\Traits\Ajaxable;
-
-class Article extends Model implements AjaxableInterface
+respondAfterDelete(bool $success)
 {
-    use Ajaxable;
-	
-	// Ajaxable checks if the model is used before deleting. 
-	// If you want to forbid deleting an article that has other articles linked, you can do this:
-	
-	public function isUsed()
-	{
-		return $this->linkedArticles()->count();
-	}
-	
-	// And let the articles be ordered within a section not with a global ordering
-	public function listNeighbours()
-	{
-		return $this->section->articles();  // Return the query builder here!
-	}
-	
-	// Maybe your list is a custom view and/or you need some more data in list that you don't want to require many times.
-	public function drawList()
-	{
-		$tags = \App\Tag::all();
+	if ($success)
+		return [
+			'success' => 1,
+			'deleted_on' => \Carbon\Carbon::now()->format('M d');
+		];
 		
-		return view('articleList', [
-			'articles' => $this->listNeighbours, 
-			'tags' => $tags,
-		])->render();
+	return 'Deletion was refused because of reasons.';
+}
+```
+
+You may override all of the `respondAfter` method if you feel the need.
+```php
+public function respondAfter(string $action, bool $success)
+{
+	return ['success' => 'uncertain'];
+}
+```
+
+
+## Tips & Tricks
+
+This section tells you how to do some stuff that the package doesn't explicitly implement.
+
+### Value should be transformed before saving or retrieving
+Use the Laravels mechanic of getters and setters (accessors).
+
+### Deleting media
+Retrieve media model, invoke the delete methods on media model.
+
+### I must do something else when action is happening.
+Use [Laravel Events](https://laravel.com/docs/master/events). If you need to distinguish ajaxable events from other, check `request()`.
+
+And remember that you can add small handlers directly in the model. For example, refuse deleting if the model is used and clean up otherwise:
+
+```php
+protected static function boot()
+{
+    parent::boot();
+    	
+    static::deleting(function($tag) {
+		if ($tag->articles()->count())
+			return false;
+		
+		$tag->synonyms()->detach();
+    });
+}
+```
+
+### Field name is uncertain or it's json or it's complicated...
+Usually this is a sign that you should ride on your own. This library makes the simple stuff simpler. If it's complicated, the overhead of making your own route and controller will be miniscule.
+
+However, if you insist that you really want to use this and it's only this one time... well, there are a few paths to hack around.
+
+You can do whatever you want in the `allowAjaxableTo` method before you allow ajaxable to work further.
+
+```php
+public function allowAjaxableTo(string $action)
+{
+	if (!Gate::allows($action, $this))
+		return false;
+	
+	if ('create' == request()->action 
+	     && isset(request()->attributes['user_id'])
+		 && 'self' == request()->attributes['user_id'] )
+	{
+		// you can tinker with request here
+		request()->attributes['user_id'] = auth()->id();
+		
+		// and you can also work with an object as it's already instantiated
+		$object->updatedByJohn = 'probably';
 	}
 }
 ```
 
-#### List of methods
-Method | Description | Default
----|---|---
-`getRowViewAttribute()` | Provide view name for response. | `ajaxable.yourModel`
-`drawRow()` | Draw single row. | Use `$this->rowView` view.
-`drawList()` | Draw list of rows. | Use `$this->rowView` view for each of `$this->listNeighbours`.
-`drawStaticList()` | Draw list if no object is specified. | Empty string.
-`respondRow()` | Respond single row. | `['success' => 1, 'row' => $this->drawRow()]`
-`respondList()` | Respond list of rows. | `['success' => 1, 'row' => $this->drawList()]`
-`respondStaticList()` | Respond list if no object is specified. | `['success' => 1, 'row' => $this->drawStaticList()]`
-`isUsed()` | If the object is being used (forbidden to delete). | `false`
-`isAllowedTo($action)` | Test if an `$action` is allowed. | `Auth::check()`
-`validateForCreation($request)` | Validate data for creation. | Validate data using `$this->validationRulesForCreation` property if it's set.
-`validate($request)` | Validate data for update. | Validate data using `$this->validationRules` property if it's set.
-`show()` | Make object visible. | Sets `$object->hide` to `false`.
-`hide()` | Make object hidden. | Sets `$object->hide` to `true`.
-`toggle()` | Toggle visibility. | Checks `$object->hide` and calls one of the above.
-`listNeighbours()` | Query to list of item and it's neighbours. | `get_class($this)::query()`
-`scopeOrdered($query)` | Scope that orders. | `$query->orderBy('order')`
-`up()` | Move object up in ordering. | Swap the order with above and clean up orderings for all the family.
-`down()` | Move object down in ordering. | Swap the order with below and clean up orderings for all the family.
-`tidyUp()` | Tidy up ordering. | Walk through ordered listNeighbours and reassign orders.
-`putFile($file, $relation, $fileKey)` | Save a file. | Puts file in `ajaxable` directory, writes a related file model or field (depending on request) and responds with path.
-`removeFile($fileKey)` | Remove a file. | Deletes the file and clears `fileKey` field or relation.
 
-You can also override `scopeActive`, `scopeOrdered` and `scopeItems` if you feel like it.
+## Goals and possible goals
+
+- Develop the frontend helpers to support customization.
+- Support for option groups?
+- Add optional change confirmation?
+- Make delete confirmation message customizable.
+- Create more javascript libraries, jQuery shouldn't be the only way.
+- Introduce some javascript events and drop stuff like scroll, highlight, reseting inputs and reporting errors to user.
+- Make javascript so that it can be compiled with the other assets.
+- Support uploads in javascript library?
+- Write some tests.
+- Improve documentation.
+- Implement option to prepare responses through Eloquent resources?
+- Retrieve single fields?
+- BelongsToMany support?
+- Refactor Traits/AjaxableHtml.
 
 ## Change log
 
+v1 is a major rewrite of library. We intend to have less changes (especially less breaking changes) in the future and we are aiming to make this library production-ready.
+
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
 
 ## Security
 
 If you discover any security related issues, please email juris@glaive.pro instead of using the issue tracker.
 
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-[link-packagist]: https://packagist.org/packages/GlaivePro/Ajaxable
-[link-author]: https://github.com/tontonsb
-[link-downloads]: https://packagist.org/packages/GlaivePro/Ajaxable
-
-[ico-version]: https://img.shields.io/packagist/v/:vendor/:package_name.svg?style=flat-square
-[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/:vendor/:package_name.svg?style=flat-square

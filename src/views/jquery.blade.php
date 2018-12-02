@@ -1,24 +1,19 @@
 <script>
-var token = $('meta[name="csrf-token"]').attr('content');
+if (null == xCsrfToken) 
+	var xCsrfToken = $('meta[name="csrf-token"]').attr('content');
 
-$.ajaxSetup({
-	headers: {
-		'X-CSRF-TOKEN': token
-	}
-});
-
-$('.ajaxable-new-attribute').change(function() {
+$(document).on('change', '.ajaxable-new-attribute', function() {
 	var attribute = $(this);
 	var creator = $(attribute.data('creator'));
 	
 	creator.data(attribute.data('key'), attribute.val());
 });
 
-$('.ajaxable-creator').click(function() {
+$(document).on('click', '.ajaxable-creator', function() {
 	var button = $(this);
 	button.prop('disabled', true);
 	
-	var inputs = $('input').filter(function(index, element) {
+	var inputs = $('input, select').filter(function(index, element) {
 		return $($(element).data('creator')).is(button);
 	});
 	
@@ -28,36 +23,54 @@ $('.ajaxable-creator').click(function() {
 	var positionForNewRow = 'last';
 	if ('first' == button.data('ajaxable-list-position'))
 		positionForNewRow = 'first';
+
+	var scroll = false;
+	if (button.data('ajaxable-scroll'))
+		scroll = true;
 	
-	var data = button.data();
-	delete data['ajaxable-list'];
-	delete data['ajaxable-list-position'];
+	var data = {
+		model: button.data().model
+	};
+
+	for (var key in button.data()) 
+	{
+		if (0 === key.indexOf('attribute_'))
+			data[key.substr(10)] = button.data(key);
+	}
 	
 	$.ajax({
 		url: "{{route('ajaxable.create')}}",
 		type: 'post',
 		dataType: 'json',
 		data: data,
+		beforeSend: function(request) {
+			request.setRequestHeader("X-CSRF-TOKEN", xCsrfToken);
+		},
 		success: function(response) {
 			if (1 == response['success'])
 			{
-				var newRow = $(response['row']);
-				
 				button.prop('disabled', false);
-				
-				var list = $(button.data('ajaxable-list'));
-				
-				if ('first' == positionForNewRow)
-					list.prepend(newRow);
-				else
-					list.append(newRow);
-				
-				inputs.val('');
-				
-				newRow.get(0).scrollIntoView();
-				newRow.addClass('ajaxable-highlight').delay(1500).queue(function(){
-					$(this).removeClass('ajaxable-highlight').dequeue();
-				});
+
+				if (response['view'])
+				{
+					var newRow = $(response['row']);
+					
+					var list = $(button.data('ajaxable-list'));
+					
+					if ('first' == button.data('ajaxable-list-position'))
+						list.prepend(newRow);
+					else
+						list.append(newRow);
+					
+					inputs.val('');
+					
+					if (button.data('ajaxable-scroll'))
+						newRow.get(0).scrollIntoView();
+					
+					newRow.addClass('ajaxable-highlight').delay(1500).queue(function(){
+						$(this).removeClass('ajaxable-highlight').dequeue();
+					});
+				}
 			}
 		},
 		error: function(rawResponse) {
@@ -84,7 +97,7 @@ $('.ajaxable-creator').click(function() {
 	});
 });
 
-$('body').on('click', '.ajaxable-delete', function() {
+$(document).on('click', '.ajaxable-delete', function() {
 	var button = $(this);
 	button.prop('disabled', true);
 	
@@ -102,17 +115,22 @@ $('body').on('click', '.ajaxable-delete', function() {
 		id: button.data('id')
 	};
 	
-	$.post(
-		"{{route('ajaxable.delete')}}",
-		data,
-		function(response) {
+	$.ajax({
+		url: "{{route('ajaxable.delete')}}",
+		type: 'post',
+		dataType: 'json',
+		data: data,
+		beforeSend: function(request) {
+			request.setRequestHeader("X-CSRF-TOKEN", xCsrfToken);
+		},
+		success: function(response) {
 			if (1 == response['success'])
 				row.remove();
 		}
-	);
+	});
 });
 
-$('body').on('change', '.ajaxable-edit', function() {
+$(document).on('change', '.ajaxable-edit', function() {
 	var field = $(this);
 	field.prop('disabled', true);
 	
@@ -139,6 +157,9 @@ $('body').on('change', '.ajaxable-edit', function() {
 		type: 'post',
 		dataType: 'json',
 		data: data,
+		beforeSend: function(request) {
+			request.setRequestHeader("X-CSRF-TOKEN", xCsrfToken);
+		},
 		success: function(response) {
 			if (1 == response['success'])
 				field.prop('disabled', false);
@@ -162,44 +183,5 @@ $('body').on('change', '.ajaxable-edit', function() {
 			field.prop('disabled', false);
 		}
 	});
-});
-
-$('body').on('click', '.ajaxable-control', function() {
-	var button = $(this);
-	button.prop('disabled', true);
-	
-	var action = button.data('action');
-	var id = button.data('id');
-	var model = button.data('model')
-	
-	var data = {
-		model: model,
-		action: action,
-		id: id
-	};
-	
-	$.post(
-		"{{route('ajaxable.control')}}",
-		data,
-		function(response) {
-			if (1 == response['success'])
-			{
-				if ('toggle' == action)
-				{
-					$('.ajaxable-control[data-action="toggle"][data-model=' + model + '][data-id=' + id + ']').toggleClass('hidden').toggleClass('d-none');
-					button.prop('disabled', false);
-				}
-				else
-				{
-					if (button.data('ajaxable-list'))
-						var list = $(button.data('ajaxable-list'));
-					else
-						var list = button.closest('.ajaxable-list');
-					
-					list.html(response['list']);
-				}
-			}
-		}
-	);
 });
 </script>

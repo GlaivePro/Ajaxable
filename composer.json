@@ -19,6 +19,7 @@
     "require": {
         "illuminate/support": "5.5 - 5.7",
         "illuminate/database": "5.5 - 5.7",
+        "illuminate/http": "5.5 - 5.7",
         "php" : ">=7.1"
     },
     "require-dev": {
@@ -34,17 +35,12 @@
         }
     },
     "scripts": {
-        "test": "phpunit",
-        "check-style": "phpcs -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src tests",
-        "fix-style": "phpcbf -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src tests"
+        "test": "phpunit"
     },
     "extra": {
-        "branch-alias": {
-            "dev-master": "1.0-dev"
-        },
 		"laravel": {
 			"providers": [
-				"GlaivePro\\Ajaxable\\AjaxableServiceProvider"
+				"GlaivePro\\Ajaxable\\ServiceProvider"
 			]
 		}
     },
