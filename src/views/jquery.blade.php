@@ -32,6 +32,9 @@ $(document).on('click', '.ajaxable-creator', function() {
 		model: button.data().model,
 		attributes: {}
 	};
+	
+	if (button.data('view'))
+		data.view = true;
 
 	for (var key in button.data()) 
 		if (0 === key.indexOf('attribute_'))

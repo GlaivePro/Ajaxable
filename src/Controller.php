@@ -18,7 +18,7 @@ class Controller
 	{
 		$object = $this->getObject(__FUNCTION__, $request);
 
-		$object->fill($request->attributes);
+		$object->fill($request->input('attributes') ?? []);
 		
 		$success = $object->save();
 		
@@ -87,7 +87,7 @@ class Controller
 	{
 		$object = $this->getObject(__FUNCTION__, $request);
 		
-		$object->fill($request->attributes);
+		$object->fill($request->input('attributes') ?? []);
 		
 		$success = $object->save();
 
