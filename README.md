@@ -326,7 +326,7 @@ Route | Required parameters | Optional parameters | Response
 `ajaxable.delete` | `model`, `id`  | | Confirmation only
 `ajaxable.updateOrCreate` | `model` | Constraints (key:value pairs in `wheres`) and values (key:value pairs in `attributes`) | Model in JSON, optional HTML
 `ajaxable.control` | `model`, `id`, `action` | `parameters` - supply whatever to be passed to called action. | Whatever you decide to return
-`ajaxable.addMedia` | `model`, `id`, `media` | `collection`, `name` | Media object
+`ajaxable.addMedia` | `model`, `id`, `media` | `collection`, `name` | Media object and URL
 
 **Example**. To update `title` to `New Title` on `App\Article` with ID 155 you'd POST `{model: 'App\Article', id: 155, key: 'title', value: 'New Title'}` to `{{route(ajaxable.update)}}`.
 
@@ -340,7 +340,7 @@ Route | Required parameters | Optional parameters | Response
 ---|---|---|---
 `ajaxable.retrieve` | `model`, `id` | | Confirmation, model in JSON, optional HTML
 `ajaxable.list` | `model` | `wheres` as key:value pairs, `scopes` as `scopeName` or `scopeName:parameter1,param2` | Model in JSON, optional HTML
-`ajaxable.getMedia` | `model`, `id` | `collection` | Media object
+`ajaxable.getMedia` | `model`, `id` | `collection` | Media object and URL
 
 **Note**. The media routes will only work if your model uses [Laravel Medialibrary](https://docs.spatie.be/laravel-medialibrary). 
 

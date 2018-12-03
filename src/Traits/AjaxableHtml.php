@@ -14,11 +14,15 @@ trait AjaxableHtml
 			
 		$classes[] = 'ajaxable-edit';
 		$options['classes'] = $classes;
-
+ 
 		$attributes = $options['attributes'] ?? [];
 		$attributes['data-model'] = __CLASS__;
 		$attributes['data-id'] = $this->id;
 		$attributes['data-key'] = $field;
+		
+		if (!isset($attributes['value']))
+			$attributes['value'] = $this->getAttribute($field);
+		
 		$options['attributes'] = $attributes;
 
 		$tag = 'input';
@@ -31,11 +35,14 @@ trait AjaxableHtml
 			}
 			else if ('textarea' == $options['type'])
 			{
-				$options['text'] = $this->$field;
+				$options['text'] = $attributes['value'];
 				$tag = 'textarea';
 			}
 			else
 				$options['attributes']['type'] = $options['type'];
+			
+			if ('checkbox' == $options['type'] && $attributes['value'])
+				$options['attributes']['checked'] = true;
 		}
 
 		$options['tag'] = $tag;

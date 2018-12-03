@@ -187,8 +187,8 @@ class Controller
 			$media = $fileAdder->toMediaCollection($request->collection);
 		else
 			$media = $fileAdder->toMediaCollection();
-		
-		return $this->respondAfter(__FUNCTION__, $media);
+
+		return $object->respondAfter(__FUNCTION__, $media);
 	}
 	
 	/**
@@ -208,7 +208,7 @@ class Controller
 		else
 			$media = $object->getMedia();
 		
-		return $this->respondAfter(__FUNCTION__, $media);
+		return $object->respondAfter(__FUNCTION__, $media);
 	}
 	
 	/***************/
@@ -220,7 +220,7 @@ class Controller
 
 		$class = $request->model;
 		
-		if (in_array($method, ['retrieve', 'update', 'delete', 'control']))
+		if (in_array($method, ['retrieve', 'update', 'delete', 'control', 'addMedia', 'getMedia']))
 			$object = $class::findOrFail($request->id);
 		else if ('updateOrCreate' == $method)
 			$object = $class::firstOrNew($request->wheres);

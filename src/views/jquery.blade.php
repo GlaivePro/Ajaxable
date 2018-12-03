@@ -33,7 +33,7 @@ $(document).on('click', '.ajaxable-creator', function() {
 		attributes: {}
 	};
 	
-	if (button.data('view'))
+	if (button.data('ajaxable-list'))
 		data.view = true;
 
 	for (var key in button.data()) 
@@ -55,10 +55,10 @@ $(document).on('click', '.ajaxable-creator', function() {
 
 				if (response['view'])
 				{
-					var newRow = $(response['row']);
+					var newRow = $(response['view']);
 					
 					var list = $(button.data('ajaxable-list'));
-					
+		
 					if ('first' == button.data('ajaxable-list-position'))
 						list.prepend(newRow);
 					else
@@ -151,7 +151,7 @@ $(document).on('change', '.ajaxable-edit', function() {
 		model: field.data('model'),
 		id: field.data('id'),
 		key: field.data('key'),
-		val: value
+		value: value
 	};
 	
 	$.ajax({

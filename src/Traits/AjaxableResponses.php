@@ -19,10 +19,18 @@ trait AjaxableResponses
 		if (in_array($action, ['create', 'retrieve', 'update', 'updateOrCreate']))
 			return $this->respondRow($result);
 
-		$response = ['result' => $result];
+		if (in_array($action, ['addMedia', 'getMedia']))
+		{
+			$response = [
+				'success' => 1,
+				'media' => $result,
+				'url' => $result->getFullUrl(),
+			];
+			
+			return $response;	
+		}
 
-		if (in_array($action, ['add_media', 'get_media']))
-			return $response;
+		$response = ['result' => $result];
 
 		if (config('app.debug'))
 			$response['warning'] = 'No response defined for '.$action;
