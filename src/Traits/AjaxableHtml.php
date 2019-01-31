@@ -160,7 +160,7 @@ trait AjaxableHtml
 			$string .= $options['text'];
 
 		if ('select' == $options['tag'])
-			foreach ($options as $option)
+			foreach ($options['options'] as $option)
 				$string .= self::ajaxableOptionHtml($option);
 
 		$string .= '</'.$options['tag'].'>';
