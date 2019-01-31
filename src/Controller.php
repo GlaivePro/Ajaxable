@@ -80,7 +80,7 @@ class Controller
 	 * Include constraints (key:value pairs) in `$request->wheres`
 	 * Include updatables (key:value pairs) in `$request->attributes`
 	 * 
-	 * @param Request $request Must contain `model` and `id`
+	 * @param Request $request Must contain `model`
 	 * @return mixed
 	 */
 	public function updateOrCreate(Request $request)
@@ -241,7 +241,7 @@ class Controller
 		'update' => ['model', 'id', 'key', 'value'],
 		'delete' => ['model', 'id'],
 
-		'updateOrCreate' => ['model', 'id'],
+		'updateOrCreate' => ['model'],
 		'list' => ['model'],
 		'control' => ['model', 'id', 'action'],
 

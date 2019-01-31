@@ -160,22 +160,28 @@ trait AjaxableHtml
 			$string .= $options['text'];
 
 		if ('select' == $options['tag'])
-			foreach ($options['option'] as $option)
-				$string .= self::ajaxableOptionHtml($option);
+			foreach ($options['options'] as $option)
+				$string .= self::ajaxableOptionHtml($option, $options['selected']);
 
 		$string .= '</'.$options['tag'].'>';
 
 		return new HtmlString($string);
 	}
 
-	protected static function ajaxableOptionHtml($option)
+	protected static function ajaxableOptionHtml($option, $selected)
 	{
 		if ($option instanceof HtmlString)
 			return $option->toHtml();
 
 		if (is_array($option))
-			return '<option value="'.$option['value'].'">'.$option['text'];
+		{
+			$selected = ($selected == $option['value']) ? ' selected' : '';
+			
+			return '<option value="'.$option['value'].'"'.$selected.'>'.$option['text'];
+		}
 
-		return '<option value="'.$option.'">'.$option;
+		$selected = $selected == $option ? ' selected' : '';
+		
+		return '<option value="'.$option.'"'.$selected.'>'.$option;
 	}
 }
