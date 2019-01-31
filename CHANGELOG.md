@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.2
+
+### Added
+- Removing media.
+
 ## 0.10.1
 
 ### Fixed
