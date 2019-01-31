@@ -43,6 +43,11 @@ trait AjaxableResponses
 		return ['success' => $result];
 	}
 
+	protected function respondAfterDeleteMedia($result)
+	{
+		return ['success' => $result];
+	}
+
 	protected function respondAfterList($result)
 	{
 		$response = ['success' => 1];

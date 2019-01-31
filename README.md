@@ -327,6 +327,7 @@ Route | Required parameters | Optional parameters | Response
 `ajaxable.updateOrCreate` | `model` | Constraints (key:value pairs in `wheres`) and values (key:value pairs in `attributes`) | Model in JSON, optional HTML
 `ajaxable.control` | `model`, `id`, `action` | `parameters` - supply whatever to be passed to called action. | Whatever you decide to return
 `ajaxable.addMedia` | `model`, `id`, `media` | `collection`, `name` | Media object and URL
+`ajaxable.deleteMedia` | `model`, `id`, `media_id` | | Confirmation only
 
 **Example**. To update `title` to `New Title` on `App\Article` with ID 155 you'd POST `{model: 'App\Article', id: 155, key: 'title', value: 'New Title'}` to `{{route(ajaxable.update)}}`.
 
@@ -429,9 +430,6 @@ This section tells you how to do some stuff that the package doesn't explicitly 
 ### Value should be transformed before saving or retrieving
 Use the Laravels mechanic of getters and setters (accessors).
 
-### Deleting media
-Retrieve media model, invoke the delete methods on media model.
-
 ### I must do something else when action is happening.
 Use [Laravel Events](https://laravel.com/docs/master/events). If you need to distinguish ajaxable events from other, check `request()`.
 
@@ -495,6 +493,7 @@ public function allowAjaxableTo(string $action)
 - BelongsToMany support?
 - Refactor Traits/AjaxableHtml.
 - Default classes/attributes for HTML.
+- Support upload field... with `ajaxable-file` and `ajaxable-files` classes?
 
 ## Change log
 

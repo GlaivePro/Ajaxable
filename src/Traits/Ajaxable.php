@@ -22,7 +22,8 @@ trait Ajaxable
 			'updateOrCreate', 
 			'list', 
 			'addMedia', 
-			'getMedia'
+			'getMedia',
+			'deleteMedia',
 		];
 		
 		if (in_array($action, $allowedActionsForAuthorized))

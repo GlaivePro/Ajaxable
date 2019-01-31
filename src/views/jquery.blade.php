@@ -132,6 +132,40 @@ $(document).on('click', '.ajaxable-delete', function() {
 	});
 });
 
+$(document).on('click', '.ajaxable-remove-media', function() {
+	var button = $(this);
+	button.prop('disabled', true);
+	
+	var test = confirm('Remove this entry?');
+	if (!test)
+	{
+		button.prop('disabled', false);
+		return false;
+	}
+	
+	var row = button.closest('.ajaxable-row');
+	
+	var data = {
+		model: button.data('model'),
+		id: button.data('id'),
+		media_id: button.data('media_id')
+	};
+	
+	$.ajax({
+		url: "{{route('ajaxable.deleteMedia')}}",
+		type: 'post',
+		dataType: 'json',
+		data: data,
+		beforeSend: function(request) {
+			request.setRequestHeader("X-CSRF-TOKEN", xCsrfToken);
+		},
+		success: function(response) {
+			if (1 == response['success'])
+				row.remove();
+		}
+	});
+});
+
 $(document).on('change', '.ajaxable-edit', function() {
 	var field = $(this);
 	field.prop('disabled', true);

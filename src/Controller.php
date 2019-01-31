@@ -210,6 +210,27 @@ class Controller
 		
 		return $object->respondAfter(__FUNCTION__, $media);
 	}
+
+	
+	/**
+	 * Remove media from model
+	 * 
+	 * @param Request $request Must contain `model`, `id` and `media_id`
+	 * @return mixed
+	 */
+	public function deleteMedia(Request $request)
+	{
+		$object = $this->getObject(__FUNCTION__, $request);
+		
+		$media = $object->getMedia()->firstWhere('id', $request->media_id);
+		
+		if (!$media)
+			return $object->respondAfter(__FUNCTION__, false);
+		
+		$media->delete();
+		
+		return $object->respondAfter(__FUNCTION__, true);
+	}
 	
 	/***************/
 	/*   HELPERS   */
@@ -220,7 +241,7 @@ class Controller
 
 		$class = $request->model;
 		
-		if (in_array($method, ['retrieve', 'update', 'delete', 'control', 'addMedia', 'getMedia']))
+		if (in_array($method, ['retrieve', 'update', 'delete', 'control', 'addMedia', 'getMedia', 'deleteMedia']))
 			$object = $class::findOrFail($request->id);
 		else if ('updateOrCreate' == $method)
 			$object = $class::firstOrNew($request->wheres);
@@ -228,6 +249,9 @@ class Controller
 			$object = new $class;
 
 		$this->verifyObject($object);
+		
+		if (in_array($method, ['addMedia', 'getMedia', 'deleteMedia']))
+			$this->verifyObjectForMedia($object);
 
 		if (!$object->allowAjaxableTo($method))
 			return response('Action not allowed', 403);
@@ -247,6 +271,7 @@ class Controller
 
 		'addMedia' => ['model', 'id', 'media'],
 		'getMedia' => ['model', 'id'],
+		'deleteMedia' => ['model', 'id', 'media_id'],
 	];
 	private function verifyRequest(string $method, Request $request)
 	{
