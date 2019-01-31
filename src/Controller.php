@@ -222,7 +222,7 @@ class Controller
 	{
 		$object = $this->getObject(__FUNCTION__, $request);
 		
-		$media = $object->getMedia()->firstWhere('id', $request->media_id);
+		$media = $object->media()->where('id', $request->media_id)->first();
 		
 		if (!$media)
 			return $object->respondAfter(__FUNCTION__, false);

@@ -15,5 +15,5 @@ Route::group(['prefix' => 'ajaxable', 'middleware' => 'web'], function () {
 	// Media
 	Route::post('add-media', 'GlaivePro\Ajaxable\Controller@addMedia')->name('ajaxable.addMedia');
 	Route::get('get-media', 'GlaivePro\Ajaxable\Controller@getMedia')->name('ajaxable.getMedia');
-	Route::get('delete-media', 'GlaivePro\Ajaxable\Controller@deleteMedia')->name('ajaxable.deleteMedia');
+	Route::post('delete-media', 'GlaivePro\Ajaxable\Controller@deleteMedia')->name('ajaxable.deleteMedia');
 });
