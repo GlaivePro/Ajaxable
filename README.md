@@ -479,21 +479,23 @@ public function allowAjaxableTo(string $action)
 ## Goals and possible goals
 
 - Develop the frontend helpers to support customization.
+- Default classes/attributes for HTML.
 - Support for option groups?
+- Or maybe leave the frontend helpers for the simplest cases only?
 - Add optional change confirmation?
 - Make delete confirmation message customizable.
-- Create more javascript libraries, jQuery shouldn't be the only way.
+- Create more javascript libraries. Both `ajaxable::jquery` and `ajaxable::es6` should be available at least.
+- Provide config to insert JS automatically. Something like `ajaxable.auto` config that accepts `jquery`, `es6` or falsy.
 - Introduce some javascript events and drop stuff like scroll, highlight, reseting inputs and reporting errors to user.
-- Make javascript so that it can be compiled with the other assets.
-- Support uploads in javascript library?
+- Support uploads in javascript library.
 - Write some tests.
 - Improve documentation.
 - Implement option to prepare responses through Eloquent resources?
 - Retrieve single fields?
 - BelongsToMany support?
 - Refactor Traits/AjaxableHtml.
-- Default classes/attributes for HTML.
 - Support upload field... with `ajaxable-file` and `ajaxable-files` classes?
+- Split the ReadMe into files?
 
 ## Change log
 
