@@ -476,10 +476,11 @@ public function allowAjaxableTo(string $action)
 ```
 
 
-## Goals and possible goals
+## TODO, goals and possible goals
 
 - Develop the frontend helpers to support customization.
 - Allow specifying the ajaxable list on `creatorButton` more easily.
+- Maybe `type="text"` should be default on inputs? It matters if you query DOM by type attribute.
 - Default classes/attributes for HTML.
 - Support for option groups?
 - Or maybe leave the frontend helpers for the simplest cases only?
