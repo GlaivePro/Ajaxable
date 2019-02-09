@@ -488,6 +488,7 @@ public function allowAjaxableTo(string $action)
 - Make delete confirmation message customizable.
 - Create more javascript libraries. Both `ajaxable::jquery` and `ajaxable::es6` should be available at least.
 - Provide config to insert JS automatically. Something like `ajaxable.auto` config that accepts `jquery`, `es6` or falsy.
+- JS library must be localizable. Currently it asks for the delete confirmation in English only...
 - Introduce some javascript events and drop stuff like scroll, highlight, reseting inputs and reporting errors to user.
 - Support uploads in javascript library.
 - Write some tests.
