@@ -492,6 +492,7 @@ public function allowAjaxableTo(string $action)
 - Support uploads in javascript library.
 - Write some tests.
 - Improve documentation.
+- Classes is the most often used option on HTML methods. Should implement approx "if second arg is array -> do as now, if it's string -> add to classes".
 - Implement option to prepare responses through Eloquent resources?
 - Retrieve single fields?
 - BelongsToMany support?
