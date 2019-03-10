@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.10.5
+
+### Fixed
+- Creator field - select.
+
+## 0.10.4
+
+### Added
+- Laravel 5.8 support.
+
+## 0.10.3
+
+### Fixed
+- Removing media.
+
 ## 0.10.2
 
 ### Added
