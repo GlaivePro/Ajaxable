@@ -124,15 +124,9 @@ trait AjaxableHtml
 		if ($options['type'] ?? false && 'input' != $options['type'])
 		{
 			if ('select' == $options['type'])
-			{
-				$options['selected'] = $this->$field;
 				$tag = 'select';
-			}
 			else if ('textarea' == $options['type'])
-			{
-				$options['text'] = $this->$field;
 				$tag = 'textarea';
-			}
 			else
 				$options['attributes']['type'] = $options['type'];
 		}
