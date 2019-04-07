@@ -483,6 +483,8 @@ public function allowAjaxableTo(string $action)
 - Maybe `type="text"` should be default on inputs? It matters if you query DOM by type attribute.
 - Default classes/attributes for HTML.
 - Support for option groups?
+- Select should have a helper or something to make passing options simpler - should allow passing array/collection and specifying key names.
+- Maybe an editor for a `belongsTo` relation should be possible and create a select with optionlist passed through `all()` on the linked model?
 - Or maybe leave the frontend helpers for the simplest cases only?
 - Add optional change confirmation?
 - Make delete confirmation message customizable.
