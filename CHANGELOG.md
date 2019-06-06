@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.6
+
+### Fixed
+- `control` method in the Controller.
+
 ## 0.10.5
 
 ### Fixed
