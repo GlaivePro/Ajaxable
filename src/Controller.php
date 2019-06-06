@@ -149,14 +149,14 @@ class Controller
 			$parameters = $request->parameters;
 
 			if (is_array($parameters))
-				$response = $object->$action(...$parameters);
+				$result = $object->$action(...$parameters);
 			else
-				$response = $object->$action($parameters);
+				$result = $object->$action($parameters);
 		}
 		else
-			$response = $object->$action();
+			$result = $object->$action();
 		
-		return $object->respondAfter($action, $success);
+		return $object->respondAfter($action, $result);
 	}
 
 	
