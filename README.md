@@ -478,6 +478,20 @@ public function allowAjaxableTo(string $action)
 
 ## TODO, goals and possible goals
 
+### Road to v1
+
+- Review routes; probably add support for more specific HTTP verbs as alternatives.
+- Review controller, simplify where possible.
+- Create feature tests for all the requests.
+- Simplify Traits/Ajaxable.
+- Add events in the backend.
+- Add exceptions in the backend.
+- Rework frontend support. Rethink the direction, make it cleaner and less opinionated. Smaller, but extensible.
+- Improve docs. Split the ReadMe into files?
+
+
+### Random frontend ideas, needs general reconsideration
+
 - Develop the frontend helpers to support customization.
 - Allow specifying the ajaxable list on `creatorButton` more easily.
 - Maybe `type="text"` should be default on inputs? It matters if you query DOM by type attribute.
@@ -495,15 +509,13 @@ public function allowAjaxableTo(string $action)
 - JS library must be localizable. Currently it asks for the delete confirmation in English only. Mby a data attribute un delete-button?
 - Introduce some javascript events and drop stuff like scroll, highlight, reseting inputs and reporting errors to user.
 - Support uploads in javascript library.
-- Write some tests.
-- Improve documentation.
+- Write some frontend tests.
 - Classes is the most often used option on HTML methods. Should implement approx "if second arg is array -> do as now, if it's string -> add to classes".
 - Implement option to prepare responses through Eloquent resources?
 - Retrieve single fields?
 - BelongsToMany support?
 - Refactor Traits/AjaxableHtml.
 - Support upload field... with `ajaxable-file` and `ajaxable-files` classes?
-- Split the ReadMe into files?
 
 ## Change log
 
