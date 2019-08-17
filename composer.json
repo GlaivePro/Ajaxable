@@ -23,6 +23,9 @@
         "php" : ">=7.1"
     },
     "require-dev": {
+        "orchestra/testbench": "^3.8",
+        "phpunit/phpunit": "^8.3",
+        "spatie/laravel-medialibrary": "^7.9"
     },
     "autoload": {
         "psr-4": {
