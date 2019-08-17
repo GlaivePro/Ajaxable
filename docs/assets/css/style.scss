@@ -2,3 +2,44 @@
 ---
 
 @import "{{ site.theme }}";
+
+body {
+	padding: 2rem;
+}
+
+.wrapper {
+	width: 65rem;
+}
+
+header, footer {
+	width: 20rem;
+}
+
+section {
+	width: 45rem;
+}
+
+.menu {
+	height: auto;
+	width: auto;
+
+	background: none;
+	border: none;
+
+	li {
+		float: none;
+		width: auto;
+		height: 2rem;
+
+		a {
+			font-size: inherit;
+			color: #267CB9;
+
+			&:hover {
+				color: #069;
+			}
+		}
+	}
+}
+
+
