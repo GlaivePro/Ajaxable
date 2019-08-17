@@ -38,8 +38,12 @@ section {
 			text-align: left;
 			padding: 0;
 
-			&:hover {
+			&:hover, :&focus {
 				color: #069;
+			}
+
+			&:active {
+				background: none;
 			}
 		}
 	}
