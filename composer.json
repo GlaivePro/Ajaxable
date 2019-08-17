@@ -34,7 +34,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "GlaivePro\\Ajaxable\\": "tests"
+            "GlaivePro\\Ajaxable\\Tests\\": "tests"
         }
     },
     "scripts": {
