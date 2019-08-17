@@ -2,27 +2,10 @@
 
 Ajaxable is a Laravel package that allows you to control (create, edit, delete) Eloquent models without bothering you on the backend. Or even frontend. Add markup to your html or use helpers and it works!
 
+See docs at https://glaivepro.github.io/Ajaxable
+
 
 ## Getting started - installation, setup and examples
-
-Install via composer.
-``` bash
-$ composer require glaivepro/ajaxable
-```
-
-Add the trait to your model.
-```php
-namespace App;
-
-use Illuminate\Database\Eloquent\Model;
-use GlaivePro\Ajaxable\Traits\Ajaxable;
-
-class Article extends Model
-{
-    use Ajaxable;
-	//
-}
-```
 
 Create ajaxable input in your view, add the CSRF token and the javascript library (this one depends on jQuery):
 ```html
@@ -516,6 +499,10 @@ public function allowAjaxableTo(string $action)
 - BelongsToMany support?
 - Refactor Traits/AjaxableHtml.
 - Support upload field... with `ajaxable-file` and `ajaxable-files` classes?
+
+### Random other ideas 
+
+- Opt-out of models in responses
 
 ## Change log
 
