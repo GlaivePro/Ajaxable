@@ -30,10 +30,13 @@ section {
 		float: none;
 		width: auto;
 		height: 2rem;
+		border: none;
 
 		a {
 			font-size: inherit;
 			color: #267CB9;
+			text-align: left;
+			padding: 0;
 
 			&:hover {
 				color: #069;
