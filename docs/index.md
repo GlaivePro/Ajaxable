@@ -37,7 +37,7 @@ All the CRUD operations are supported as well as some more advanced features.
 
 ## Doing the job on the frontend as well
 
-> **Note** These features are still in the beta and will undergo breaking changes in the future.
+> ⚠️ These features are still in the beta and will undergo breaking changes in the future.
 
 As a beta feature we also have a jQuery library that watches your fields for changes and posts the updates. And there's even a field maker, so you could actually just do this in your view.
 
