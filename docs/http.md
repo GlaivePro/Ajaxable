@@ -2,11 +2,8 @@
 
 HTTP backend is the core of this library. You [have added](setup) a trait to your model and now you can interact with that model. Without making any routes or controllers yourself.
 
-<details markdown="1">
-<summary>Table of Contents</summary>
 * TOC
 {:toc}
-</details>
 
 ## Requests
 
