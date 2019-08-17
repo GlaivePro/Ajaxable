@@ -9,7 +9,7 @@ $ composer require glaivepro/ajaxable
 
 ## Setting up
 
-You only to add the trait to a model that you want to be ajaxable. Classically it's written like this in Laravel.
+You have to add the trait to a model that you want to be ajaxable.
 
 ```php
 namespace App;

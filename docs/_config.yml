@@ -1,1 +1,6 @@
 theme: jekyll-theme-minimal
+
+kramdown:
+  input: GFM
+  hard_wrap: false
+  toc_levels: "2,3,4"
