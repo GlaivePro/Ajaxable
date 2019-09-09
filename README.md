@@ -499,6 +499,7 @@ public function allowAjaxableTo(string $action)
 - BelongsToMany support?
 - Refactor Traits/AjaxableHtml.
 - Support upload field... with `ajaxable-file` and `ajaxable-files` classes?
+- Helper to include the ajaxable routes in a global js variable.
 
 ### Random other ideas 
 
