@@ -463,7 +463,7 @@ public function allowAjaxableTo(string $action)
 
 ### Road to v1
 
-- Review routes; probably add support for more specific HTTP verbs as alternatives.
+- Review routes; probably add support for more specific HTTP verbs as alternatives. And/or use JSON RPC?
 - Review controller, simplify where possible.
 - Create feature tests for all the requests.
 - Simplify Traits/Ajaxable.
