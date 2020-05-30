@@ -17,10 +17,10 @@
         }
     ],
     "require": {
-        "laravel/framework": "^7.13",
-        "orchestra/testbench": "^5.2"
+        "laravel/framework": "^7.13"
     },
     "require-dev": {
+        "orchestra/testbench": "^5.2"
     },
     "autoload": {
         "psr-4": {
