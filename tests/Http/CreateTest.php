@@ -31,7 +31,7 @@ class CreateTest extends \GlaivePro\Ajaxable\Tests\TestCase
                 'model' => $this->model
             ]
         );
-
+        
         $response
             ->assertStatus(201)
             ->assertJsonStructure([

@@ -3,7 +3,7 @@ namespace GlaivePro\Ajaxable\Tests;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
-    private $model;
+    protected $model;
 
     /**
      * Set up the test environment.
@@ -14,7 +14,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     {
         parent::setUp();
 
-        $this->model = 'GlaivePro\Ajaxable\Tests\Model';
+        $this->model = '\GlaivePro\Ajaxable\Tests\Models\Model';
+        $this->loadMigrationsFrom(__DIR__ . '/migrations');
     }
 
     /**
