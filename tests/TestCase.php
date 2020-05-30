@@ -7,7 +7,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
     /**
      * Set up the test environment.
-     * 
+     *
      * @return void
      */
     protected function setUp(): void
@@ -20,10 +20,10 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
     /**
      * Load package service provider
-     * 
+     *
      * @param  \Illuminate\Foundation\Application $app
-     * 
-     * @return GlaivePro\Ajaxable\ServiceProvider
+     *
+     * @return array
      */
     protected function getPackageProviders($app)
     {
