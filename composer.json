@@ -17,10 +17,22 @@
         }
     ],
     "require": {
+<<<<<<< HEAD
         "laravel/framework": "^7.13"
     },
     "require-dev": {
         "orchestra/testbench": "^5.2"
+=======
+        "illuminate/support": ">=5.5",
+        "illuminate/database": ">=5.5",
+        "illuminate/http": ">=5.5",
+        "php" : ">=7.1"
+    },
+    "require-dev": {
+        "orchestra/testbench": ">=3.8",
+        "phpunit/phpunit": ">=8.3",
+        "spatie/laravel-medialibrary": ">=7.9"
+>>>>>>> 445eedd41b05a7a492966ee800c0636c90b54241
     },
     "autoload": {
         "psr-4": {

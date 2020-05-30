@@ -463,7 +463,7 @@ public function allowAjaxableTo(string $action)
 
 ### Road to v1
 
-- Review routes; probably add support for more specific HTTP verbs as alternatives.
+- Review routes; probably add support for more specific HTTP verbs as alternatives. And/or use JSON RPC?
 - Review controller, simplify where possible.
 - Create feature tests for all the requests.
 - Simplify Traits/Ajaxable.
@@ -499,6 +499,7 @@ public function allowAjaxableTo(string $action)
 - BelongsToMany support?
 - Refactor Traits/AjaxableHtml.
 - Support upload field... with `ajaxable-file` and `ajaxable-files` classes?
+- Blade helper to include the ajaxable routes in a global js variable.
 
 ### Random other ideas 
 
