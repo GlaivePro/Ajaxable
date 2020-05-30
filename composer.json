@@ -17,15 +17,10 @@
         }
     ],
     "require": {
-        "illuminate/support": "5.5 - 5.8",
-        "illuminate/database": "5.5 - 5.8",
-        "illuminate/http": "5.5 - 5.8",
-        "php" : ">=7.1"
+        "laravel/framework": "^7.13",
+        "orchestra/testbench": "^5.2"
     },
     "require-dev": {
-        "orchestra/testbench": "^3.8",
-        "phpunit/phpunit": "^8.3",
-        "spatie/laravel-medialibrary": "^7.9"
     },
     "autoload": {
         "psr-4": {
