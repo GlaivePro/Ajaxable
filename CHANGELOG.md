@@ -2,7 +2,13 @@
 
 ## 1.0.0
 
+### Changed
 
+- HTTP API syntax
+
+### Added
+
+- Tests
 
 ## 0.10.6
 
