@@ -20,7 +20,7 @@ class Controller
 
 		$object->fill($request->input('attributes') ?? []);
 		
-		$success = $object->save();
+		$success = $object->save();  // doesn't work in test atm....
 		
 		// Reacquire from DB to obtain default field values
 		$object->refresh();
@@ -254,7 +254,7 @@ class Controller
 			$this->verifyObjectForMedia($object);
 
 		if (!$object->allowAjaxableTo($method))
-			return response('Action not allowed', 403);
+			abort(403, 'Action not allowed');
 
 		return $object;
 	}
