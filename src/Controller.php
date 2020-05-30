@@ -252,18 +252,12 @@ class Controller
 		
 		if (in_array($method, ['addMedia', 'getMedia', 'deleteMedia']))
 			$this->verifyObjectForMedia($object);
-<<<<<<< HEAD
-
-		if (!$object->allowAjaxableTo($method))
-			abort(403, 'Action not allowed');
-=======
 		
 		$askForPermissionTo = $method;
 		if ('control' == $method)
 			$askForPermissionTo = $request->action;
 		
 		abort_unless($object->allowAjaxableTo($askForPermissionTo), 403, 'Action not allowed');
->>>>>>> 445eedd41b05a7a492966ee800c0636c90b54241
 
 		return $object;
 	}
