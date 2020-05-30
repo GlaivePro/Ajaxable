@@ -5,12 +5,12 @@ namespace GlaivePro\Ajaxable;
 use Illuminate\Http\Request;
 
 class Controller
-{	
+{
 	/**
 	 * Create a model
-	 * 
+	 *
 	 * Include contents (key:value pairs) in `$request->attributes`
-	 * 
+	 *
 	 * @param Request $request Must contain `model`
 	 * @return mixed
 	 */
@@ -19,76 +19,76 @@ class Controller
 		$object = $this->getObject(__FUNCTION__, $request);
 
 		$object->fill($request->input('attributes') ?? []);
-		
+
 		$success = $object->save();  // doesn't work in test atm....
-		
+
 		// Reacquire from DB to obtain default field values
 		$object->refresh();
-		
+
 		return $object->respondAfter(__FUNCTION__, $success);
 	}
-	
+
 	/**
 	 * Retrieve a model
-	 * 
+	 *
 	 * @param Request $request  Must contain `model` and `id`
 	 * @return mixed
 	 */
 	public function retrieve(Request $request)
 	{
 		$object = $this->getObject(__FUNCTION__, $request);
-		
+
 		return $object->respondAfter(__FUNCTION__);
 	}
-	
+
 	/**
 	 * Update a model
-	 * 
+	 *
 	 * @param Request $request Must contain `model`, `id`, `key` and `value`
 	 * @return mixed
 	 */
 	public function update(Request $request)
 	{
 		$object = $this->getObject(__FUNCTION__, $request);
-		
+
 		$key = $request->key;
 		$object->$key = $request->value;
-		
+
 		$success = $object->save();
-		
+
 		return $object->respondAfter(__FUNCTION__, $success);
 	}
-	
+
 	/**
 	 * Delete a model
-	 * 
+	 *
 	 * @param Request $request  Must contain `model` and `id`
 	 * @return mixed
 	 */
 	public function delete(Request $request)
 	{
 		$object = $this->getObject(__FUNCTION__, $request);
-		
+
 		$success = $object->delete();
-		
+
 		return $object->respondAfter(__FUNCTION__, $success);
 	}
 
 	/**
 	 * Update existing model or create a new one
-	 * 
+	 *
 	 * Include constraints (key:value pairs) in `$request->wheres`
 	 * Include updatables (key:value pairs) in `$request->attributes`
-	 * 
+	 *
 	 * @param Request $request Must contain `model`
 	 * @return mixed
 	 */
 	public function updateOrCreate(Request $request)
 	{
 		$object = $this->getObject(__FUNCTION__, $request);
-		
+
 		$object->fill($request->input('attributes') ?? []);
-		
+
 		$success = $object->save();
 
 		return $object->respondAfter(__FUNCTION__, $success);
@@ -96,10 +96,10 @@ class Controller
 
 	/**
 	 * Get a collection of models
-	 * 
+	 *
 	 * Pass any constraints (key:value pairs) in `$request->wheres`
 	 * Pass any scopes in `$request->scopes`
-	 * 
+	 *
 	 * @param Request $request Must contain `model`
 	 * @return mixed
 	 */
@@ -128,14 +128,14 @@ class Controller
 
 		return $object->respondAfter(__FUNCTION__, $query->get());
 	}
-	
+
 	/**
 	 * Invoke an action on model
-	 * 
+	 *
 	 * Pass any parameter or parameters in `$request->parameters`
 	 * If `parameters` is an array it will be unpacked
 	 * So wrap array in array if you want to pass just a single array
-	 * 
+	 *
 	 * @param Request $request Must contain `model`, `id` and `action`
 	 * @return mixed
 	 */
@@ -143,7 +143,7 @@ class Controller
 	{
 		$object = $this->getObject(__FUNCTION__, $request);
 		$action = $request->action;
-		
+
 		if ($request->has('parameters'))
 		{
 			$parameters = $request->parameters;
@@ -155,23 +155,23 @@ class Controller
 		}
 		else
 			$result = $object->$action();
-		
+
 		return $object->respondAfter($action, $result);
 	}
 
-	
+
 	/**
 	 * Add media to model
-	 * 
+	 *
 	 * Specify `collection`, `name`, `filename`, `properties` if needed
-	 * 
+	 *
 	 * @param Request $request Must contain `model`, `id` and `media`
 	 * @return mixed
 	 */
 	public function addMedia(Request $request)
 	{
 		$object = $this->getObject(__FUNCTION__, $request);
-	
+
 		$fileAdder = $object->addMediaFromRequest('media');
 
 		if ($request->has('name'))
@@ -190,13 +190,13 @@ class Controller
 
 		return $object->respondAfter(__FUNCTION__, $media);
 	}
-	
+
 	/**
 	 * Get media of a model
-	 * 
+	 *
 	 * Specify `collection` if needed
-	 * 
-	 * @param Request $request 
+	 *
+	 * @param Request $request
 	 * @return type
 	 */
 	public function getMedia(Request $request)
@@ -207,31 +207,31 @@ class Controller
 			$media = $object->getMedia('collection');
 		else
 			$media = $object->getMedia();
-		
+
 		return $object->respondAfter(__FUNCTION__, $media);
 	}
 
-	
+
 	/**
 	 * Remove media from model
-	 * 
+	 *
 	 * @param Request $request Must contain `model`, `id` and `media_id`
 	 * @return mixed
 	 */
 	public function deleteMedia(Request $request)
 	{
 		$object = $this->getObject(__FUNCTION__, $request);
-		
+
 		$media = $object->media()->where('id', $request->media_id)->first();
-		
+
 		if (!$media)
 			return $object->respondAfter(__FUNCTION__, false);
-		
+
 		$media->delete();
-		
+
 		return $object->respondAfter(__FUNCTION__, true);
 	}
-	
+
 	/***************/
 	/*   HELPERS   */
 	/***************/
@@ -240,7 +240,7 @@ class Controller
 		$this->verifyRequest($method, $request);
 
 		$class = $request->model;
-		
+
 		if (in_array($method, ['retrieve', 'update', 'delete', 'control', 'addMedia', 'getMedia', 'deleteMedia']))
 			$object = $class::findOrFail($request->id);
 		else if ('updateOrCreate' == $method)
@@ -249,14 +249,14 @@ class Controller
 			$object = new $class;
 
 		$this->verifyObject($object);
-		
+
 		if (in_array($method, ['addMedia', 'getMedia', 'deleteMedia']))
 			$this->verifyObjectForMedia($object);
-		
+
 		$askForPermissionTo = $method;
 		if ('control' == $method)
 			$askForPermissionTo = $request->action;
-		
+
 		abort_unless($object->allowAjaxableTo($askForPermissionTo), 403, 'Action not allowed');
 
 		return $object;
@@ -283,7 +283,7 @@ class Controller
 		foreach ($this->requiredFields[$method] as $field)
 			abort_unless($request->has($field), 400, 'Ajaxable request to '.$method.' must include '.$field.'.');
 	}
-	
+
 	private $requiredMethods = [
 		'allowAjaxableTo',
 		'respondAfter',
@@ -293,7 +293,7 @@ class Controller
 		foreach ($this->requiredMethods as $method)
 			abort_unless(is_callable([$object, $method]), 501, 'Ajaxable interface is not implemented.');
 	}
-	
+
 	private function verifyObjectForMedia($object)
 	{
 		$this->verifyObject($object);
