@@ -6,18 +6,18 @@ trait AjaxableResponses
 {
 	public function respondAfter(string $action, $result)
 	{
-		$method = 'respondAfter'.studly_case($action);
-		
+		$method = 'respondAfter'.\Str::studly($action);
+
 		if (method_exists($this, $method))
 			return $this->$method($result);
-			
+
 		return $this->fallbackResponse($action, $result);
 	}
-	
+
 	public function fallbackResponse(string $action, $result)
 	{
 		if (in_array($action, ['create', 'retrieve', 'update', 'updateOrCreate']))
-			return $this->respondRow($result);
+			return $this->respondRow($result, $action);
 
 		if (in_array($action, ['addMedia', 'getMedia']))
 		{
@@ -26,15 +26,15 @@ trait AjaxableResponses
 				'media' => $result,
 				'url' => $result->getFullUrl(),
 			];
-			
-			return $response;	
+
+			return $response;
 		}
 
 		$response = ['result' => $result];
 
 		if (config('app.debug'))
 			$response['warning'] = 'No response defined for '.$action;
-		
+
 		return $response;
 	}
 
@@ -63,7 +63,7 @@ trait AjaxableResponses
 			$view = request()->viewname;
 			abort_unless(view()->exists($view), 500, 'View '.$view.' not found.');
 			$rendered = view($view, [str_plural(self::getPlainClassName()) => $result])->render();
-				
+
 		}
 		else if (request()->has('rowviewname'))
 		{
@@ -81,7 +81,7 @@ trait AjaxableResponses
 		else
 		{
 			$view = $this->getRowView();
-			
+
 			abort_unless(view()->exists($view), 500, 'Neither view '.$view.' nor '.$this->getListView().' was found.');
 
 			$rendered = '';
@@ -94,7 +94,7 @@ trait AjaxableResponses
 		return $response;
 	}
 
-	protected function respondRow($result)
+	protected function respondRow($result, string $action)
 	{
 		$response = ['success' => $result];
 
@@ -102,7 +102,7 @@ trait AjaxableResponses
 			$response['object'] = $this;
 
 		if (!request()->has('view'))
-			return $response;
+			return response()->json($response, 201);
 
 		if (request()->has('viewname'))
 			$view = request()->viewname;

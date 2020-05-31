@@ -8,32 +8,32 @@ trait Ajaxable
 
 	/**
 	 * Permission checking
-	 * 
-	 * @param string $action 
+	 *
+	 * @param string $action
 	 * @return boolean
 	 */
 	public function allowAjaxableTo(string $action) : bool
 	{
 		$allowedActionsForAuthorized = [
-			'create', 
-			'retrieve', 
-			'update', 
-			'delete', 
-			'updateOrCreate', 
-			'list', 
-			'addMedia', 
+			'create',
+			'retrieve',
+			'update',
+			'delete',
+			'updateOrCreate',
+			'list',
+			'addMedia',
 			'getMedia',
 			'deleteMedia',
 		];
-		
+
 		if (in_array($action, $allowedActionsForAuthorized))
 			return auth()->check();
-		
+
 		return false;
 	}
 
 	protected static function getPlainClassName()
 	{
-		return camel_case(class_basename(__CLASS__));
+		return \Str::camel(class_basename(__CLASS__));
 	}
 }
