@@ -15,11 +15,8 @@ class CreateModelsTable extends Migration
     {
         Schema::create('models', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('col1');
-            $table->string('col2S');
-            $table->string('col3');
-            $table->string('col4');
-            $table->string('col5');
+            $table->string('col1')->nullable();
+            $table->string('col2')->default('content');
             $table->timestamps();
         });
     }
