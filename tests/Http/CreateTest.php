@@ -32,8 +32,6 @@ class CreateTest extends \GlaivePro\Ajaxable\Tests\TestCase
             ]
 		);
 
-		dd($response->getContent());
-		dd($response->all());
         $response
             ->assertStatus(201)
             ->assertJsonStructure([
@@ -69,6 +67,5 @@ class CreateTest extends \GlaivePro\Ajaxable\Tests\TestCase
                 'data.object.col1' => 'content1',
                 'data.object.col2' => 'content',
 			]);
-
     }
 }

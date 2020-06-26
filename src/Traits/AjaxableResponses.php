@@ -22,15 +22,20 @@ trait AjaxableResponses
 		if (in_array($action, ['addMedia', 'getMedia']))
 		{
 			$response = [
-				'success' => 1,
-				'media' => $result,
-				'url' => $result->getFullUrl(),
+				'status' => 'success',
+				'data' => [
+					'json' => $result,
+					'url' => $result->getFullUrl(),
+				],
 			];
 
 			return $response;
 		}
 
-		$response = ['result' => $result];
+		$response = [
+			'status' => 'success',
+			'data' => $result,
+		];
 
 		if (config('app.debug'))
 			$response['warning'] = 'No response defined for '.$action;
@@ -40,20 +45,27 @@ trait AjaxableResponses
 
 	protected function respondAfterDelete($result)
 	{
-		return ['success' => $result];
+		return [
+			'status' => $result ? 'success' : 'error'
+		];
 	}
 
 	protected function respondAfterDeleteMedia($result)
 	{
-		return ['success' => $result];
+		return [
+			'status' => $result ? 'success' : 'error'
+		];
 	}
 
 	protected function respondAfterList($result)
 	{
-		$response = ['success' => 1];
+		$response = [
+			'status' => $result ? 'success' : 'error',
+			'data' => [],
+		];
 
 		if (request()->collection !== false)
-			$response['collection'] = $result;
+			$response['data']['json'] = $result;
 
 		if (!request()->has('view'))
 			return $response;
@@ -89,17 +101,20 @@ trait AjaxableResponses
 				$rendered .= view($view, [self::getPlainClassName() => $row])->render();
 		}
 
-		$response['view'] = $rendered;
+		$response['data']['view'] = $rendered;
 
 		return $response;
 	}
 
 	protected function respondRow($result, string $action)
 	{
-		$response = ['success' => $result];
+		$response = [
+			'status' => $result ? 'success' : 'error',
+			'data' => [],
+		];
 
 		if (request()->object !== false)
-			$response['object'] = $this;
+			$response['data']['json'] = $this;
 
 		if (!request()->has('view'))
 			return response()->json($response, 201);
@@ -111,7 +126,7 @@ trait AjaxableResponses
 
 		abort_unless(view()->exists($view), 500, 'View '.$view.' not found.');
 
-		$response['view'] = view($view, [self::getPlainClassName() => $this])->render();
+		$response['data']['view'] = view($view, [self::getPlainClassName() => $this])->render();
 
 		return $response;
 	}
