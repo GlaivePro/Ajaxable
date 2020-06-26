@@ -4,8 +4,6 @@ namespace GlaivePro\Ajaxable\Traits;
 
 trait Ajaxable
 {
-	use AjaxableResponses, AjaxableHtml;
-
 	/**
 	 * Permission checking
 	 *
