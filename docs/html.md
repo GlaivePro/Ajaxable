@@ -1,1 +1,0 @@
-Sorry, these docs haven't been written yet. Take a look in the [old docs](https://github.com/GlaivePro/Ajaxable) meanwhile.

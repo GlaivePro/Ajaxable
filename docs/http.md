@@ -1,15 +1,20 @@
 # HTTP Interface
 
-HTTP backend is the core of this library. You [have added](setup) a trait to your model and now you can interact with that model. Without making any routes or controllers yourself.
+HTTP backend is the core of this library. You [have added](setup) a trait to
+your model and now you can interact with that model. Without making any routes
+or controllers yourself.
 
 * TOC
 {:toc}
 
 ## Requests
 
-The HTTP interface supports appropriate HTTP verbs but does not require them. You can use the proper method, you could spoof it like the Laravel supports the spoofing or you could just use POST and GET for everything.
+The HTTP interface supports appropriate HTTP verbs but does not require them.
+You can use the proper method, you could spoof it like the Laravel supports the
+spoofing or you could just use POST and GET for everything.
 
-The requests that change something (post, put, patch, delete) will also require the CSRF token if your app uses CSRF protection (on by default in Laravel).
+The requests that change something (post, put, patch, delete) will also require
+the CSRF token if your app uses CSRF protection (on by default in Laravel).
 
 
 ### The CRUD
@@ -44,19 +49,28 @@ DELETE/POST | `ajaxable.deleteMedia` | `model`, `id`, `media_id` | | Confirmatio
 
 ## Responses 
 
-The responses are formed according to [JSend standard](https://github.com/omniti-labs/jsend) and accompanied by the appropriate status code.
+The responses are formed according to [JSend standard](https://github.com/omniti-labs/jsend)
+and accompanied by the appropriate status code.
 
-A response will contain `status` and either `data` or `message` with latter being used for `status: error`.
+A response will contain `status` and either `data` or `message` with latter
+being used for `status: error`.
 
-The data will contain a model in JSON unless a delete was performed. Optionally you may also require a rendered HTML of the model.
+The data will contain a model in JSON unless a delete was performed. Optionally
+you may also require a rendered HTML of the model.
 
 ### Rendered HTML
 
-Most requests can ask for a rendered view in the response. Those are the ones with an optional `view` parameter above. You just have to specify the view name as you would in the Laravel's `view()` helper or `View` facade.
+Most requests can ask for a rendered view in the response. Those are the ones
+with an optional `view` parameter above. You just have to specify the view name
+as you would in the Laravel's `view()` helper or `View` facade.
 
-The view will receive your model in a variable named after the model class basename, in lowercase. It means that when rendering `\App\Project` your view would receive `$project`.
+The view will receive your model in a variable named after the model class
+basename, in lowercase. It means that when rendering `\App\Project` your view
+would receive `$project`.
 
-An exception to this rule is the `ajaxable.list` which receives the list in a pluralized name. So view that renders a list of `\App\Project` would receive `$projects`.
+An exception to this rule is the `ajaxable.list` which receives the list in a
+pluralized name. So view that renders a list of `\App\Project` would receive
+`$projects`.
 
 
 ## Deeper dive and examples
@@ -300,7 +314,8 @@ Removes a record.
 
 ### Update or Create
 
-Updates a fields no model or creates a model and sets the field values. Returns the model, optionally rendered to HTML.
+Updates a fields no model or creates a model and sets the field values. Returns
+the model, optionally rendered to HTML.
 
 > 💡 The HTML responses and errors can be seen among Create and Retrieve examples.
 
@@ -334,7 +349,8 @@ Updates a fields no model or creates a model and sets the field values. Returns 
 
 ### List
 
-Retrieves a collection of models. Optionally filtered or scoped. Optionally rendered via a view.
+Retrieves a collection of models. Optionally filtered or scoped. Optionally
+rendered via a view.
 
 > 💡 The HTML responses and errors can be seen among Create and Retrieve examples.
 
@@ -431,7 +447,8 @@ Retrieves a collection of models. Optionally filtered or scoped. Optionally rend
 
 Invoke a method on your model.
 
-> ⚠️ These actions must be explicitly permitted on your model, otherwise they are blocked.
+> ⚠️ These actions must be explicitly permitted on your model, otherwise they
+are blocked.
 
 > 💡 The errors can be seen among Create and Retrieve examples.
 
