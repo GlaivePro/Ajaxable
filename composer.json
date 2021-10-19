@@ -33,7 +33,7 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text"
     },
     "extra": {
 		"laravel": {
