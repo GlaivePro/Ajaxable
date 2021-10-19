@@ -29,9 +29,4 @@ trait Ajaxable
 
 		return false;
 	}
-
-	protected static function getPlainClassName()
-	{
-		return \Str::camel(class_basename(__CLASS__));
-	}
 }
